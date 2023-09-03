@@ -1,0 +1,16 @@
+import pygame
+
+WIDTH, HEIGHT = 1600, 900
+ROWS, COLS = 19, 19
+SQUARE_SIZE = min(WIDTH//COLS, HEIGHT//ROWS)
+BOARD_HEIGHT_OFFSET = max(0, (HEIGHT - SQUARE_SIZE*ROWS)//2)
+BOARD_WIDTH_OFFSET = max(0, (WIDTH - SQUARE_SIZE*COLS)//2)
+
+RED = (255, 0 ,0)
+BLUE = (0, 0, 255)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GREY = (128, 128, 128)
+BROWN = (205,133,63)
+
+CROWN = pygame.transform.scale(pygame.image.load('goha/assets/crown512.png'), (WIDTH//COLS//3, HEIGHT//ROWS//3))
