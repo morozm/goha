@@ -1,7 +1,6 @@
 import pygame
 from .board import Board
-from .piece import Piece
-from .constants import RED, WHITE, BLUE, SQUARE_SIZE, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET
+from .constants import BLACK, WHITE, BLUECOLOR, SQUARE_SIZE, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET
 
 class Game:
     def __init__(self, win):
@@ -10,7 +9,7 @@ class Game:
     
     def update(self):
         self.board.draw(self.win)
-        self.draw_valid_moves(self.valid_moves)
+        # self.draw_valid_moves(self.valid_moves)
         pygame.display.update()
 
     def reset(self):
@@ -18,7 +17,7 @@ class Game:
 
     def _init(self):
         self.board = Board()
-        self.turn = RED
+        self.turn = BLACK
         self.valid_moves = {}
 
     def winner(self):
@@ -36,11 +35,11 @@ class Game:
     def draw_valid_moves(self, moves): #unused
         for move in moves:
             row, col = move
-            pygame.draw.circle(self.win, BLUE, (col * SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_WIDTH_OFFSET, row * SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_HEIGHT_OFFSET), SQUARE_SIZE//6)
+            pygame.draw.circle(self.win, BLUECOLOR, (col * SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_WIDTH_OFFSET, row * SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_HEIGHT_OFFSET), SQUARE_SIZE//6)
 
     def change_turn(self):
         self.valid_moves = {}
-        if self.turn == RED:
+        if self.turn == BLACK:
             self.turn = WHITE
         else:
-            self.turn = RED
+            self.turn = BLACK

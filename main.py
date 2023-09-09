@@ -1,5 +1,5 @@
 import pygame
-from goha.constants import RED, WIDTH, HEIGHT, SQUARE_SIZE, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET, ROWS, COLS
+from goha.constants import WIDTH, HEIGHT, SQUARE_SIZE, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET, ROWS, COLS
 from goha.game import Game
 
 FPS = 60

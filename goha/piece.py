@@ -1,5 +1,5 @@
 import pygame
-from .constants import RED, WHITE, GREY, SQUARE_SIZE, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET
+from .constants import STONECOLORS, GREYCOLOR, SQUARE_SIZE, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET
 
 class Piece:
     PADDING = 12
@@ -19,7 +19,7 @@ class Piece:
 
     def draw(self, win):
         radius = SQUARE_SIZE//2 - self.PADDING
-        pygame.draw.circle(win, GREY, (self.x, self.y), (radius + self.OUTLINE))
+        pygame.draw.circle(win, GREYCOLOR, (self.x, self.y), (radius + self.OUTLINE))
         pygame.draw.circle(win, self.color, (self.x, self.y), radius)
 
     def move(self, row, col):
