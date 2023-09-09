@@ -1,5 +1,6 @@
 import pygame
 from .board import Board
+from .piece import Piece
 from .constants import RED, WHITE, BLUE, SQUARE_SIZE, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET
 
 class Game:
@@ -16,7 +17,6 @@ class Game:
         self._init()
 
     def _init(self):
-        self.selected = None
         self.board = Board()
         self.turn = RED
         self.valid_moves = {}
@@ -24,33 +24,16 @@ class Game:
     def winner(self):
         return self.board.winner()
 
-    def select(self, row, col):
-        if self.selected:
-            result = self._move(row, col)
-            if not result:
-                self.selected = None
-                self.select(row, col)
-
+    def place(self, row, col):
         piece = self.board.get_piece(row, col)
-        if piece != 0 and piece.color == self.turn:
-            self.selected = piece
-            self.valid_moves = self.board.get_valid_moves(piece)
-            return True
-        return False
-    
-    def _move(self, row, col):
-        piece = self.board.get_piece(row, col)
-        if self.selected and piece == 0 and (row, col) in self.valid_moves: #piece == 0 unnecessary
-            self.board.move(self.selected, row, col)
-            skipped = self.valid_moves[(row, col)]
-            if skipped:
-                self.board.remove(skipped)
+        if piece == 0:
+            self.board.place(row, col, self.turn)
             self.change_turn()
+            return True
         else:
             return False
-        return True
     
-    def draw_valid_moves(self, moves):
+    def draw_valid_moves(self, moves): #unused
         for move in moves:
             row, col = move
             pygame.draw.circle(self.win, BLUE, (col * SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_WIDTH_OFFSET, row * SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_HEIGHT_OFFSET), SQUARE_SIZE//6)

@@ -12,5 +12,3 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREY = (128, 128, 128)
 BROWN = (205,133,63)
-
-CROWN = pygame.transform.scale(pygame.image.load('goha/assets/crown512.png'), (WIDTH//COLS//3, HEIGHT//ROWS//3))

@@ -1,5 +1,5 @@
 import pygame
-from .constants import RED, WHITE, GREY, SQUARE_SIZE, CROWN, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET
+from .constants import RED, WHITE, GREY, SQUARE_SIZE, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET
 
 class Piece:
     PADDING = 12
@@ -9,7 +9,6 @@ class Piece:
         self.row = row
         self.col = col
         self.color = color
-        self.king = False
         self.x = 0
         self.y = 0
         self.calc_pos()
@@ -18,15 +17,10 @@ class Piece:
         self.x = SQUARE_SIZE*self.col + SQUARE_SIZE // 2 + BOARD_WIDTH_OFFSET
         self.y = SQUARE_SIZE*self.row + SQUARE_SIZE // 2 + BOARD_HEIGHT_OFFSET
 
-    def make_king(self):
-        self.king = True
-
     def draw(self, win):
         radius = SQUARE_SIZE//2 - self.PADDING
         pygame.draw.circle(win, GREY, (self.x, self.y), (radius + self.OUTLINE))
         pygame.draw.circle(win, self.color, (self.x, self.y), radius)
-        if self.king:
-            win.blit(CROWN, (self.x - CROWN.get_width()//2, self.y - CROWN.get_height()//2))
 
     def move(self, row, col):
         self.row = row
