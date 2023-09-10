@@ -1,5 +1,6 @@
 import pygame
 from .board import Board
+from .opponent import Opponent
 from .constants import BLACK, WHITE, BLUECOLOR, SQUARE_SIZE, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET
 
 class Game:
@@ -17,6 +18,7 @@ class Game:
 
     def _init(self):
         self.board = Board()
+        self.opponent = Opponent()
         self.turn = BLACK
         self.valid_moves = {}
 
@@ -27,6 +29,9 @@ class Game:
         piece = self.board.get_piece(row, col)
         if piece == 0:
             self.board.place(row, col, self.turn)
+            self.board.evaluate()
+            self.change_turn()
+            self.opponent.make_random_move(self.turn, self.board)
             self.change_turn()
             return True
         else:
