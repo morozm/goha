@@ -29,6 +29,7 @@ class Game:
         piece = self.board.get_piece(row, col)
         if piece == 0:
             self.board.place(row, col, self.turn)
+            self.board.captures(3 - self.turn)
             self.board.evaluate()
             self.change_turn()
             self.opponent.make_random_move(self.turn, self.board)

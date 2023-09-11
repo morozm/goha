@@ -97,5 +97,14 @@ class Board:
             if self.board[square] != OFFBOARD: 
                 self.board[square] &= 3
 
+    def captures(self, color):
+        for square in range(len(self.board)):
+            piece = self.board[square]
+            if piece == OFFBOARD: continue
+            if piece & color:
+                self.count(square, color)
+                if len(self.liberties) == 0: self.clear_block()
+                self.restore_board()
+
     def evaluate(self):
         pass

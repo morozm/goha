@@ -15,18 +15,18 @@ class Opponent:
             random_square = random.randrange(len(board.board))
         
         board.place2(random_square, color)
-        board.count(random_square, color)
+        board.captures(3 - color)
+        # board.count(random_square, color)
         
-        if len(board.liberties) == 0:
-            board.restore_board()
-            board.set_piece(random_square, EMPTY)
-            # board[random_square] = EMPTY
+        # if len(board.liberties) == 0:
+        #     board.restore_board()
+        #     board.set_piece(random_square, EMPTY)
 
-            try:
-                return self.make_random_move(color, board)
-            except:
-                return '' 
+        #     try:
+        #         return self.make_random_move(color, board)
+        #     except:
+        #         return '' 
 
-        board.restore_board()
+        # board.restore_board()
         
-        # print('random move:', board.board[random_square])
+        # print('random move:', random_square)
