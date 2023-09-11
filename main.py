@@ -36,8 +36,8 @@ def main():
                     row, col = get_row_col_from_mouse(pos)
                     if game.place(row, col):
                         game.process_move()
-                        game.opponent_moves()
-                        game.process_move()
+                        # game.opponent_moves()
+                        # game.process_move()
         game.update()
     
     pygame.quit()

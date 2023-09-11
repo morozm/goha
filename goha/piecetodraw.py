@@ -2,8 +2,8 @@ import pygame
 from .constants import STONECOLORS, COLS, ROWS, GREYCOLOR, SQUARE_SIZE, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET
 
 class PieceToDraw:
-    PADDING = 12
-    OUTLINE = 2
+    PADDING = 15    #percents
+    OUTLINE = 2     #pixels
     
     def __init__(self, square, color):
         self.square = square
@@ -23,10 +23,10 @@ class PieceToDraw:
         self.row = self.square//(COLS+2)-1
         self.col = self.square - (self.row+1)*(COLS+2) - 1
 
-    def draw(self, win):
-        radius = SQUARE_SIZE//2 - self.PADDING
-        pygame.draw.circle(win, GREYCOLOR, (self.x, self.y), (radius + self.OUTLINE))
-        pygame.draw.circle(win, self.color, (self.x, self.y), radius)
+    def draw(self, offset, win):
+        radius = round((100 - self.PADDING)/100 * SQUARE_SIZE / 2)
+        pygame.draw.circle(win, GREYCOLOR, (self.x + offset[0], self.y + offset[1]), (radius + self.OUTLINE))
+        pygame.draw.circle(win, self.color, (self.x + offset[0], self.y + offset[1]), radius)
 
     def __repr__(self):
         return str(self.color)

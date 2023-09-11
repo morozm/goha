@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 from .constants import OFFBOARD, MARKER, EMPTY, LIBERTY, BOARDS, SELECTED_BOARD, STONECOLORS, BLACKCOLOR, BROWNCOLOR, ROWS, COLS, SQUARE_SIZE, BOARD_HEIGHT_OFFSET, BOARD_WIDTH_OFFSET
 from .piecetodraw import PieceToDraw
 
@@ -9,8 +9,10 @@ class Board:
         self.block = []
         self.liberties = []
         self.legal_moves = []
+        self.offsets = []
         # self.create_board()
         self.load_board()
+        self.create_offsets()
 
     def draw_squares(self, win):
         win.fill(BLACKCOLOR)
@@ -43,6 +45,10 @@ class Board:
                 else:
                     self.board.append(0)
 
+    def create_offsets(self):
+        for row in range(ROWS+2):
+            for col in range(COLS+2):
+                self.offsets.append([round(random.randrange(-7, 7)/100 * SQUARE_SIZE), round(random.randrange(-7, 7)/100 * SQUARE_SIZE)])
     def load_board(self):
         self.board = BOARDS[SELECTED_BOARD]
 
@@ -52,7 +58,7 @@ class Board:
             piece = self.board[square]
             if piece != 0 and piece != 7:
                 piece = PieceToDraw(square, STONECOLORS[piece])
-                piece.draw(win)
+                piece.draw(self.offsets[square], win)
                     
     def remove(self, pieces): # unused
         for piece in pieces:
