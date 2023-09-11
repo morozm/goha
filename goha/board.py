@@ -5,8 +5,10 @@ from .piecetodraw import PieceToDraw
 class Board:
     def __init__(self):
         self.board = []
+        self.board_copy = []
         self.block = []
         self.liberties = []
+        self.legal_moves = []
         # self.create_board()
         self.load_board()
 
@@ -22,7 +24,7 @@ class Board:
         return (row+1)*(COLS+2)+col+1
 
     def place(self, row, col, turn):
-        self.board[self.calc_square(row, col)] = turn
+        self.place2(self.calc_square(row, col), turn)
 
     def place2(self, square, turn):
         self.board[square] = turn
@@ -60,9 +62,9 @@ class Board:
     def winner(self):
         return None 
     
-    def get_valid_moves(self, piece):
-        moves = {}
-        return moves
+    # def get_valid_moves(self, piece):
+    #     moves = {}
+    #     return moves
     
     def count(self, square, color):
         piece = self.board[square]
@@ -105,6 +107,22 @@ class Board:
                 self.count(square, color)
                 if len(self.liberties) == 0: self.clear_block()
                 self.restore_board()
+
+    def find_legal_moves(self, color):
+        self.legal_moves = []
+        for square in range(len(self.board)):
+            piece = self.board[square]
+            if piece != EMPTY:
+                continue
+            else:
+                self.board_copy = self.board.copy()
+                self.place2(square, color)
+                self.captures(3 - color)
+                self.count(square, color)
+                if len(self.liberties) != 0:
+                    self.legal_moves.append(square)
+                self.clear_groups()
+                self.board = self.board_copy
 
     def evaluate(self):
         pass

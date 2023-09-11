@@ -32,9 +32,12 @@ def main():
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                if (get_row_col_from_mouse(pos) != False):
+                if (get_row_col_from_mouse(pos) != False and game.gamestate == 'active'):
                     row, col = get_row_col_from_mouse(pos)
-                    game.place(row, col)
+                    if game.place(row, col):
+                        game.process_move()
+                        game.opponent_moves()
+                        game.process_move()
         game.update()
     
     pygame.quit()
