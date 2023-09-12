@@ -68,11 +68,7 @@ class Board:
     def winner(self):
         return None 
     
-    # def get_valid_moves(self, piece):
-    #     moves = {}
-    #     return moves
-    
-    def count(self, square, color):
+    def count(self, square, color): # count liberties
         piece = self.board[square]
         if piece == OFFBOARD:
             return
@@ -88,7 +84,8 @@ class Board:
             self.liberties.append(square)
 
     def clear_block(self):
-        for captured in self.block: self.board[captured] = EMPTY
+        for captured in self.block:
+            self.board[captured] = EMPTY
 
     def clear_groups(self):
         self.block = []
@@ -108,27 +105,40 @@ class Board:
     def captures(self, color):
         for square in range(len(self.board)):
             piece = self.board[square]
-            if piece == OFFBOARD: continue
+            if piece == OFFBOARD:
+                continue
             if piece & color:
                 self.count(square, color)
-                if len(self.liberties) == 0: self.clear_block()
+                if len(self.liberties) == 0:
+                    self.clear_block()
                 self.restore_board()
 
     def find_legal_moves(self, color):
         self.legal_moves = []
+        self.board_copy = self.board.copy()
         for square in range(len(self.board)):
             piece = self.board[square]
             if piece != EMPTY:
                 continue
             else:
-                self.board_copy = self.board.copy()
                 self.place2(square, color)
-                self.captures(3 - color)
+                
+                neighbours = [square - (COLS+2), square - 1, square + (COLS+2), square + 1] # captures but only for neighbours
+                for square2 in neighbours:
+                    piece = self.board[square2]
+                    if piece == OFFBOARD:
+                        continue
+                    if piece & color:
+                        self.count(square2, color)
+                        if len(self.liberties) == 0:
+                            self.clear_block()
+                        self.restore_board()
+
                 self.count(square, color)
                 if len(self.liberties) != 0:
                     self.legal_moves.append(square)
                 self.clear_groups()
-                self.board = self.board_copy
+                self.board = self.board_copy.copy()
 
     def evaluate(self):
         pass
