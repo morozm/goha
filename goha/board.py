@@ -151,7 +151,7 @@ class Board:
 
     def evaluate(self, color):
         best_count = 0
-        best_liberty = self.liberties[0]
+        best_liberty = False
         # loop over the liberties within the list
         for liberty in self.liberties:
             # put stone on board
@@ -159,7 +159,7 @@ class Board:
             # count new liberties
             self.count(liberty, color)
             # found more liberties
-            if len(self.liberties) > best_count and not self.detect_edge(liberty):
+            if len(self.liberties) > best_count and not self.detect_edge(liberty) and liberty in self.legal_moves:
                 best_liberty = liberty
                 best_count = len(self.liberties)     
             # restore board

@@ -46,7 +46,8 @@ class Game:
         self.check_if_legal_moves_exist()
 
     def opponent_moves(self):
-        self.opponent.genmove(self.turn, self.board)
+        if self.gamestate == 'active':
+            self.opponent.gen_move(self.turn, self.board)
 
     def draw_valid_moves(self, moves): #unused
         for move in moves:
