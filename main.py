@@ -1,45 +1,15 @@
 import pygame
 from goha.constants import WIDTH, HEIGHT, SQUARE_SIZE, BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET, ROWS, COLS
-from goha.game import Game
+from goha.mainmenu import Mainmenu
 
-FPS = 60
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('goha')
+pygame.init()
+pygame.display.set_caption('GOHA')
+pygame_icon = pygame.image.load('goha/assets/gohaicon.png')
+pygame.display.set_icon(pygame_icon)
 # pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
-def get_row_col_from_mouse(pos):
-    x, y = pos
-    row = (y - BOARD_HEIGHT_OFFSET) // SQUARE_SIZE
-    col = (x - BOARD_WIDTH_OFFSET) // SQUARE_SIZE
-    if (row<0 or col<0 or row>=ROWS or col>=COLS):
-        return False
-    return row, col
-
 def main():
-    run = True
-    clock = pygame.time.Clock()
-    game = Game(WIN)
-
-    while run:
-        clock.tick(FPS)
-
-        if game.winner() != None:
-            print(game.winner())
-            run = False
-        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                if (get_row_col_from_mouse(pos) != False and game.gamestate == 'active'):
-                    row, col = get_row_col_from_mouse(pos)
-                    if game.place(row, col):
-                        game.process_move()
-                        game.opponent_moves() # comment these 2 lines to play solo
-                        game.process_move()   # comment these 2 lines to play solo
-        game.update()
-    
-    pygame.quit()
+    mainmenu = Mainmenu(WIN)
 
 main()
