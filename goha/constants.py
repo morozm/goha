@@ -99,6 +99,8 @@ BLUECOLOR = (0, 0, 255)
 WHITECOLOR = (255, 255, 255)
 BLACKCOLOR = (0, 0, 0)
 GREYCOLOR = (128, 128, 128)
+LIGHTGREYCOLOR = (200, 200, 200)
+DARKREDCOLOR = (173, 17, 17)
 BROWNCOLOR = (205,133,63)
 
 # stone colors
@@ -108,4 +110,20 @@ STONECOLORS = {
     5: REDCOLOR,
     6: BLACKCOLOR,
     8: BLUECOLOR
+}
+
+SELECTED_SETTINGS = {
+    'Username': 'User',
+    'Theme': 'Theme1',
+    'Language': 'English',
+    'Stone_Centering': False,
+    'Sound': 100 
+}
+
+THEMES = {
+    'Theme1', 'Theme2', 'Theme3'
+}
+
+LANGUAGES = {
+    'English', 'Polish'
 }
