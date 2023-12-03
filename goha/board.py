@@ -1,5 +1,5 @@
 import pygame, random
-from .constants import OFFBOARD, MARKER, EMPTY, LIBERTY, BOARDS, SELECTED_BOARD, STONECOLORS, BLACKCOLOR, BROWNCOLOR, ROWS, COLS, SQUARE_SIZE, BOARD_HEIGHT_OFFSET, BOARD_WIDTH_OFFSET
+from .constants import OFFBOARD, MARKER, EMPTY, LIBERTY, BOARDS, SELECTED_BOARD, OFFSETS_ENABLED, STONECOLORS, BLACKCOLOR, BROWNCOLOR, ROWS, COLS, SQUARE_SIZE, BOARD_HEIGHT_OFFSET, BOARD_WIDTH_OFFSET
 from .piecetodraw import PieceToDraw
 
 class Board:
@@ -48,7 +48,10 @@ class Board:
     def create_offsets(self):
         for row in range(ROWS+2):
             for col in range(COLS+2):
-                self.offsets.append([round(random.randrange(-7, 7)/100 * SQUARE_SIZE), round(random.randrange(-7, 7)/100 * SQUARE_SIZE)])
+                if (OFFSETS_ENABLED == 1):
+                    self.offsets.append([round(random.randrange(-7, 7)/100 * SQUARE_SIZE), round(random.randrange(-7, 7)/100 * SQUARE_SIZE)])
+                else:
+                    self.offsets.append([0, 0])
                 
     def load_board(self):
         self.board = BOARDS[SELECTED_BOARD]
