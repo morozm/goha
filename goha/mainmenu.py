@@ -70,6 +70,10 @@ class Mainmenu:
                     elif is_exit_hovered:
                         pygame.quit()
                         sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
 
             # Refresh window
             pygame.display.flip()

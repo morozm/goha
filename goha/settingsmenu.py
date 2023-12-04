@@ -18,9 +18,15 @@ class Settingsmenu:
         self.options_spacing_horizontal = 80
         self.options_input_length = 400
 
-        self.username_input_rect = None
+        # self.username_input_rect = None
         self.username_input_text = "User"
         self.username_input_active = False
+
+        self.slider_height = 6
+        self.volume = 50
+        self.knob_dragging = False
+        self.knob_radius = 10
+
         self.run_menu()
 
     def draw_button(self, screen, text, x, y, width, height, base_color, hover_color, text_color, is_hovered):
@@ -60,6 +66,17 @@ class Settingsmenu:
         color = pressed_color if is_active else base_color
         pygame.draw.rect(screen, color, (x, y, width, height))
 
+    def draw_slider(self, screen, x, y, width, height, base_color, pressed_color, text_color, knob_dragging):
+        self.slider_rect = pygame.Rect(x, y, width, height)
+        color = pressed_color if knob_dragging else base_color
+        pygame.draw.rect(screen, base_color, self.slider_rect)
+        self.knob_x = x + self.volume * self.options_input_length // 100
+        self.knob_y = y + height // 2
+        pygame.draw.circle(screen, color, (self.knob_x, self.knob_y), self.knob_radius)
+        text_surface = self.button_font.render(f"{self.volume}%", True, text_color)
+        text_rect = text_surface.get_rect(midright=(self.slider_rect.right + 120, self.slider_rect.centery))
+        screen.blit(text_surface, text_rect)
+
     def run_menu(self):
         # Title
         title_text = self.title_font.render("GOHA", True, BLACKCOLOR)
@@ -67,7 +84,6 @@ class Settingsmenu:
 
         # Options
         options = ["Username", "Theme", "Language", "Stone Centering", "Sound"]
-        sound_slider = pygame.Rect(WIDTH // 2 + 40, 620 + 20, 200, 40)
 
         while self.running:
             self.win.fill(WHITECOLOR)
@@ -78,12 +94,13 @@ class Settingsmenu:
                 text_rect = text_surface.get_rect(topright=(WIDTH // 2 - self.options_spacing_horizontal // 2, self.options_start_y + i * (self.options_height + self.options_spacing)))
                 self.win.blit(text_surface, text_rect)
 
-            pygame.draw.rect(self.win, BLACKCOLOR, sound_slider, 2)
-
             self.draw_username_field(self.win, self.username_input_text, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y, self.options_input_length, self.options_height, LIGHTGREYCOLOR, GREYCOLOR, BLACKCOLOR, False)
             self.draw_theme_field(self.win, self.username_input_text, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 1 * (self.options_height + self.options_spacing), self.options_input_length, self.options_height, LIGHTGREYCOLOR, GREYCOLOR, BLACKCOLOR, False)
             self.draw_language_field(self.win, self.username_input_text, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 2 * (self.options_height + self.options_spacing), self.options_input_length, self.options_height, LIGHTGREYCOLOR, GREYCOLOR, BLACKCOLOR, False)
             self.draw_stone_centering_checkbox(self.win, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 3 * (self.options_height + self.options_spacing), self.options_height, self.options_height, LIGHTGREYCOLOR, GREYCOLOR, BLACKCOLOR, False)            
+            self.draw_slider(self.win, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 4.5 * (self.options_height + self.options_spacing) - self.slider_height // 2 - self.knob_radius, self.options_input_length, self.slider_height, LIGHTGREYCOLOR, BLACKCOLOR, BLACKCOLOR, False)
+            # 800+40, 300+4*80, 400, 6
+            # 840, 620, 400, 6 
 
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
@@ -110,20 +127,33 @@ class Settingsmenu:
                     if self.username_input_rect.collidepoint(event.pos):
                         self.username_input_active = not self.username_input_active
                     else:
-                        username_input_active = False
+                        self.username_input_active = False
                     if is_save_hovered:
                         self.running = False
                     elif is_cancel_hovered:
                         self.running = False
+                    if event.button == 1:
+                        knob_rect = pygame.Rect(self.knob_x - self.knob_radius, self.knob_y - self.knob_radius, self.knob_radius * 2, self.knob_radius * 2)
+                        if knob_rect.collidepoint(event.pos):
+                            self.knob_dragging = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1:
+                        self.knob_dragging = False
+                elif event.type == pygame.MOUSEMOTION:
+                    if self.knob_dragging:
+                        self.knob_x = event.pos[0]
+                        self.volume = max(0, min((self.knob_x - (WIDTH // 2 + self.options_spacing_horizontal // 2)) // (self.options_input_length // 100), 100))
                 elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.running = False
                     if self.username_input_active:
                         if event.key == pygame.K_RETURN:
-                            print("Wprowadzona nazwa użytkownika:", self.username_input_text)
+                            print("Username entered:", self.username_input_text)
                             self.username_input_active = False
                         elif event.key == pygame.K_BACKSPACE:
                             self.username_input_text = self.username_input_text[:-1]
                         else:
-                            self.username_input_text += event.unicode
+                            self.username_input_text += event.unicode 
 
             # Refresh window
             pygame.display.flip()

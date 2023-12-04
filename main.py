@@ -10,6 +10,6 @@ pygame.display.set_icon(pygame_icon)
 # pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
 def main():
-    mainmenu = Mainmenu(WIN)
+    Mainmenu(WIN)
 
 main()
