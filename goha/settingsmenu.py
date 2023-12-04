@@ -1,6 +1,7 @@
 import pygame
 import sys
-from .constants import BLACKCOLOR, WHITECOLOR, LIGHTGREYCOLOR, GREYCOLOR, WIDTH
+from .settings import Settings
+from .constants import BLACKCOLOR, WHITECOLOR, LIGHTGREYCOLOR, GREYCOLOR, WIDTH, THEMES_LIST, LANGUAGES_LIST
 
 class Settingsmenu:
     def __init__(self, win):
@@ -8,8 +9,10 @@ class Settingsmenu:
         self._init()
 
     def _init(self):
+        self.settings = Settings()
         self.running = True
-        self.button_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 36)
+        self.button_font_size = 36
+        self.button_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", self.button_font_size)
         self.title_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 100)
 
         self.options_start_y = 300
@@ -18,12 +21,26 @@ class Settingsmenu:
         self.options_spacing_horizontal = 80
         self.options_input_length = 400
 
-        # self.username_input_rect = None
-        self.username_input_text = "User"
-        self.username_input_active = False
+        self.settings.load_settings()
 
+        self.username_input_text = self.settings.get_username()
+        self.username_input_border = 5
+        self.username_input_active = False
+        self.cursor_toggle_time = 0
+        self.cursor_visible = False
+
+        self.theme_select_text = self.settings.get_theme()
+
+        self.language_select_text = self.settings.get_language()
+
+        self.stone_centering = self.settings.get_stone_centering()
+        self.stone_centering_growing = False
+        self.stone_centering_border = 8
+        self.growing_square_size = 0 if not self.stone_centering else self.options_height - 2 * self.stone_centering_border
+        self.growing_speed = 2
+
+        self.volume = self.settings.get_volume()
         self.slider_height = 6
-        self.volume = 50
         self.knob_dragging = False
         self.knob_radius = 10
 
@@ -38,40 +55,67 @@ class Settingsmenu:
         screen.blit(text_surface, text_rect)
 
     def draw_username_field(self, screen, text, x, y, width, height, base_color, pressed_color, text_color, is_active):
-        self.username_input_rect = pygame.Rect(x, y, width, height)
-        color = pressed_color if is_active else base_color
-        pygame.draw.rect(screen, color, (x, y, width, height))
+        self.username_input_rect = pygame.Rect(x, y - height // 2, width, height)
+        if is_active:
+            pygame.draw.rect(screen, pressed_color, (x, y - height // 2, width, height))
+            pygame.draw.rect(screen, base_color, (x + self.username_input_border, y - height // 2 + self.username_input_border, width - self.username_input_border * 2, height - self.username_input_border * 2))
+        else:
+            pygame.draw.rect(screen, base_color, (x, y - height // 2, width, height))
+        text_surface = self.button_font.render(text + '|', True, text_color) if (self.cursor_visible and is_active) else self.button_font.render(text, True, text_color)
+        text_rect = text_surface.get_rect(midleft=(x + self.options_spacing, y))
+        screen.blit(text_surface, text_rect)
+        current_time = pygame.time.get_ticks()
+        if is_active and (current_time > self.cursor_toggle_time):
+            self.cursor_visible = not self.cursor_visible
+            self.cursor_toggle_time = current_time + 500
+
+    def draw_theme_field(self, screen, text, x, y, width, height, base_color, text_color):
+        self.theme_input_rect = pygame.Rect(x, y - height // 2, width, height)
+        pygame.draw.rect(screen, base_color, (x, y - height // 2, width, height))
         text_surface = self.button_font.render(text, True, text_color)
-        text_rect = text_surface.get_rect(midleft=(x + self.options_spacing, y + height / 2))
+        text_rect = text_surface.get_rect(midleft=(x + self.options_spacing, y))
         screen.blit(text_surface, text_rect)
 
-    def draw_theme_field(self, screen, text, x, y, width, height, base_color, pressed_color, text_color, is_active):
-        self.theme_input_rect = pygame.Rect(x, y, width, height)
-        color = pressed_color if is_active else base_color
-        pygame.draw.rect(screen, color, (x, y, width, height))
+    def draw_language_field(self, screen, text, x, y, width, height, base_color, text_color):
+        self.language_input_rect = pygame.Rect(x, y - height // 2, width, height)
+        pygame.draw.rect(screen, base_color, (x, y - height // 2, width, height))
         text_surface = self.button_font.render(text, True, text_color)
-        text_rect = text_surface.get_rect(midleft=(x + self.options_spacing, y + height / 2))
+        text_rect = text_surface.get_rect(midleft=(x + self.options_spacing, y))
         screen.blit(text_surface, text_rect)
 
-    def draw_language_field(self, screen, text, x, y, width, height, base_color, pressed_color, text_color, is_active):
-        self.language_input_rect = pygame.Rect(x, y, width, height)
-        color = pressed_color if is_active else base_color
-        pygame.draw.rect(screen, color, (x, y, width, height))
-        text_surface = self.button_font.render(text, True, text_color)
-        text_rect = text_surface.get_rect(midleft=(x + self.options_spacing, y + height / 2))
-        screen.blit(text_surface, text_rect)
-
-    def draw_stone_centering_checkbox(self, screen, x, y, width, height, base_color, pressed_color, text_color, is_active):
-        self.stone_centering_checkbox_rect = pygame.Rect(x, y, width, height)
-        color = pressed_color if is_active else base_color
-        pygame.draw.rect(screen, color, (x, y, width, height))
+    def draw_stone_centering_checkbox(self, screen, x, y, squaresize, base_color, pressed_color, is_active, is_growing):
+        self.stone_centering_checkbox_rect = pygame.Rect(x, y - squaresize // 2, squaresize, squaresize)
+        # stone_centering_checkbox2_rect = pygame.Rect(x + self.stone_centering_border, y + self.stone_centering_border, width - 2 * self.stone_centering_border, height - 2 * self.stone_centering_border)
+        pygame.draw.rect(screen, base_color, (x, y - squaresize // 2, squaresize, squaresize))
+        if self.stone_centering_growing:
+            if self.stone_centering:
+                self.growing_square_size += self.growing_speed
+                if self.growing_square_size >= squaresize - 2 * self.stone_centering_border:
+                    self.growing_square_size = squaresize - 2 * self.stone_centering_border
+                    self.stone_centering_growing = False
+            else:
+                self.growing_square_size -= self.growing_speed
+                if self.growing_square_size <= 0:
+                    self.growing_square_size = 0
+                    self.stone_centering_growing = False
+        else:
+            if self.stone_centering:
+                pass
+                # stone_centering_checkbox2_rect = pygame.Rect(0, 0, self.growing_square_size, self.growing_square_size)
+                # stone_centering_checkbox2_rect.center = self.stone_centering_checkbox_rect.center
+                # pygame.draw.rect(screen, pressed_color, stone_centering_checkbox2_rect)
+            else:
+                pass
+        stone_centering_checkbox2_rect = pygame.Rect(0, 0, self.growing_square_size, self.growing_square_size)
+        stone_centering_checkbox2_rect.center = self.stone_centering_checkbox_rect.center
+        pygame.draw.rect(screen, pressed_color, stone_centering_checkbox2_rect)
 
     def draw_slider(self, screen, x, y, width, height, base_color, pressed_color, text_color, knob_dragging):
-        self.slider_rect = pygame.Rect(x, y, width, height)
+        self.slider_rect = pygame.Rect(x, y - self.options_height // 2, width, height)
         color = pressed_color if knob_dragging else base_color
         pygame.draw.rect(screen, base_color, self.slider_rect)
         self.knob_x = x + self.volume * self.options_input_length // 100
-        self.knob_y = y + height // 2
+        self.knob_y = y - self.options_height // 2 + height // 2
         pygame.draw.circle(screen, color, (self.knob_x, self.knob_y), self.knob_radius)
         text_surface = self.button_font.render(f"{self.volume}%", True, text_color)
         text_rect = text_surface.get_rect(midright=(self.slider_rect.right + 120, self.slider_rect.centery))
@@ -83,7 +127,7 @@ class Settingsmenu:
         title_rect = title_text.get_rect(center=(WIDTH // 2, 150))
 
         # Options
-        options = ["Username", "Theme", "Language", "Stone Centering", "Sound"]
+        options = ["Username", "Theme", "Language", "Stone Centering", "Volume"]
 
         while self.running:
             self.win.fill(WHITECOLOR)
@@ -91,16 +135,14 @@ class Settingsmenu:
 
             for i, option in enumerate(options):
                 text_surface = self.button_font.render(option, True, BLACKCOLOR)
-                text_rect = text_surface.get_rect(topright=(WIDTH // 2 - self.options_spacing_horizontal // 2, self.options_start_y + i * (self.options_height + self.options_spacing)))
+                text_rect = text_surface.get_rect(midright=(WIDTH // 2 - self.options_spacing_horizontal // 2, self.options_start_y + i * (self.options_height + self.options_spacing)))
                 self.win.blit(text_surface, text_rect)
 
-            self.draw_username_field(self.win, self.username_input_text, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y, self.options_input_length, self.options_height, LIGHTGREYCOLOR, GREYCOLOR, BLACKCOLOR, False)
-            self.draw_theme_field(self.win, self.username_input_text, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 1 * (self.options_height + self.options_spacing), self.options_input_length, self.options_height, LIGHTGREYCOLOR, GREYCOLOR, BLACKCOLOR, False)
-            self.draw_language_field(self.win, self.username_input_text, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 2 * (self.options_height + self.options_spacing), self.options_input_length, self.options_height, LIGHTGREYCOLOR, GREYCOLOR, BLACKCOLOR, False)
-            self.draw_stone_centering_checkbox(self.win, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 3 * (self.options_height + self.options_spacing), self.options_height, self.options_height, LIGHTGREYCOLOR, GREYCOLOR, BLACKCOLOR, False)            
-            self.draw_slider(self.win, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 4.5 * (self.options_height + self.options_spacing) - self.slider_height // 2 - self.knob_radius, self.options_input_length, self.slider_height, LIGHTGREYCOLOR, BLACKCOLOR, BLACKCOLOR, False)
-            # 800+40, 300+4*80, 400, 6
-            # 840, 620, 400, 6 
+            self.draw_username_field(self.win, self.username_input_text, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y, self.options_input_length, self.options_height, LIGHTGREYCOLOR, BLACKCOLOR, BLACKCOLOR, self.username_input_active)
+            self.draw_theme_field(self.win, self.theme_select_text, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 1 * (self.options_height + self.options_spacing), self.options_input_length, self.options_height, LIGHTGREYCOLOR, BLACKCOLOR)
+            self.draw_language_field(self.win, self.language_select_text, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 2 * (self.options_height + self.options_spacing), self.options_input_length, self.options_height, LIGHTGREYCOLOR, BLACKCOLOR)
+            self.draw_stone_centering_checkbox(self.win, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 3 * (self.options_height + self.options_spacing), self.options_height, LIGHTGREYCOLOR, BLACKCOLOR, self.stone_centering, self.stone_centering_growing)            
+            self.draw_slider(self.win, WIDTH // 2 + self.options_spacing_horizontal // 2, self.options_start_y + 4.5 * (self.options_height + self.options_spacing) - self.slider_height // 2 - self.knob_radius, self.options_input_length, self.slider_height, LIGHTGREYCOLOR, BLACKCOLOR, BLACKCOLOR, self.knob_dragging)
 
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
@@ -125,10 +167,31 @@ class Settingsmenu:
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if self.username_input_rect.collidepoint(event.pos):
-                        self.username_input_active = not self.username_input_active
+                        self.username_input_active = True
+                        self.cursor_visible = True
+                        self.cursor_toggle_time = pygame.time.get_ticks() + 300
                     else:
                         self.username_input_active = False
+                    if self.theme_input_rect.collidepoint(event.pos):
+                        try:
+                            index = THEMES_LIST.index(self.theme_select_text)
+                            next_index = (index + 1) % len(THEMES_LIST)
+                            self.theme_select_text = THEMES_LIST[next_index]
+                        except ValueError:
+                            self.theme_select_text = THEMES_LIST[0]
+                    if self.language_input_rect.collidepoint(event.pos):
+                        try:
+                            index = LANGUAGES_LIST.index(self.language_select_text)
+                            next_index = (index + 1) % len(LANGUAGES_LIST)
+                            self.language_select_text = LANGUAGES_LIST[next_index]
+                        except ValueError:
+                            self.language_select_text = LANGUAGES_LIST[0]
+                    if self.stone_centering_checkbox_rect.collidepoint(event.pos):
+                        self.stone_centering = not self.stone_centering
+                        self.stone_centering_growing = True
+                        print(self.stone_centering)
                     if is_save_hovered:
+                        self.settings.save_settings(self.username_input_text, self.theme_select_text, self.language_select_text, self.stone_centering, self.volume)
                         self.running = False
                     elif is_cancel_hovered:
                         self.running = False
@@ -156,4 +219,5 @@ class Settingsmenu:
                             self.username_input_text += event.unicode 
 
             # Refresh window
+            pygame.time.Clock().tick(60)
             pygame.display.flip()

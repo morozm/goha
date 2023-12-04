@@ -1,5 +1,3 @@
-import pygame
-
 ###################################
 #
 # 0000 => 0    empty sqare
@@ -112,18 +110,10 @@ STONECOLORS = {
     8: BLUECOLOR
 }
 
-SELECTED_SETTINGS = {
-    'Username': 'User',
-    'Theme': 'Theme1',
-    'Language': 'English',
-    'Stone_Centering': False,
-    'Sound': 100 
-}
-
-THEMES = {
+THEMES_LIST = [
     'Theme1', 'Theme2', 'Theme3'
-}
+]
 
-LANGUAGES = {
-    'English', 'Polish'
-}
+LANGUAGES_LIST = [
+    'English', 'Polski'
+]

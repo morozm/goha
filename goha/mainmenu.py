@@ -1,13 +1,15 @@
 import pygame
 import sys
+from .background import Background
 from .gamemenu import Gamemenu
 from .settingsmenu import Settingsmenu
 from .infomenu import Infomenu
-from .constants import WHITECOLOR, BLACKCOLOR, LIGHTGREYCOLOR, DARKREDCOLOR, REDCOLOR, WIDTH, HEIGHT
+from .constants import WHITECOLOR, BLACKCOLOR, LIGHTGREYCOLOR, WIDTH
 
 class Mainmenu:
     def __init__(self, win):
         self.win = win
+        self.background = Background(self.win)
         self._init()
 
     def _init(self):
@@ -29,6 +31,7 @@ class Mainmenu:
 
         while True:
             self.win.fill(WHITECOLOR)
+            self.background.draw_background()
             self.win.blit(title_text, title_rect)
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
@@ -77,3 +80,4 @@ class Mainmenu:
 
             # Refresh window
             pygame.display.flip()
+            pygame.time.Clock().tick(60)
