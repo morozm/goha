@@ -1,19 +1,21 @@
 import pygame
 import sys
-from .settings import Settings
-from .constants import BLACKCOLOR, WHITECOLOR, LIGHTGREYCOLOR, GREYCOLOR, WIDTH, THEMES_LIST, LANGUAGES_LIST
+from .settings import Settings, THEMES_LIST, LANGUAGES_LIST
+from .constants import BLACKCOLOR, WHITECOLOR, LIGHTGREYCOLOR, WIDTH, THEMES
 
 class Settingsmenu:
     def __init__(self, win):
         self.win = win
+        self.settings = Settings()
+        self.load_settings()
+        self.running = False
         self._init()
 
     def _init(self):
-        self.settings = Settings()
-        self.running = False
         self.button_font_size = 36
+        self.title_font_size = 100
         self.button_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", self.button_font_size)
-        self.title_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 100)
+        self.title_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", self.title_font_size)
 
         self.options = ["Username", "Theme", "Language", "Stone Centering", "Volume"]
         self.options_start_y = 300
@@ -22,31 +24,33 @@ class Settingsmenu:
         self.options_spacing_horizontal = 80
         self.options_input_length = 400
 
-        self.settings.load_settings()
-
-        self.title_text = self.title_font.render("GOHA", True, BLACKCOLOR)
+        self.title_text = self.title_font.render("GOHA", True, self.theme['maincolor1'])
         self.title_rect = self.title_text.get_rect(center=(WIDTH // 2, 150))
-
-        self.username_input_text = self.settings.get_username()
+        
         self.username_input_border = 5
         self.username_input_active = False
         self.cursor_toggle_time = 0
         self.cursor_visible = False
-
-        self.theme_select_text = self.settings.get_theme()
-
-        self.language_select_text = self.settings.get_language()
-
-        self.stone_centering = self.settings.get_stone_centering()
+        
+        self.theme_triangle_spacing = 30
+        
         self.stone_centering_growing = False
         self.stone_centering_border = 8
         self.growing_square_size = 0 if not self.stone_centering else self.options_height - 2 * self.stone_centering_border
         self.growing_speed = 5
-
-        self.volume = self.settings.get_volume()
+        
         self.slider_height = 6
         self.knob_dragging = False
         self.knob_radius = 10
+
+    def load_settings(self):
+        self.username_input_text = self.settings.get_username()
+        self.theme_select_text = self.settings.get_selected_theme()
+        self.theme = self.settings.get_theme()
+        self.language_select_text = self.settings.get_selected_language()
+        self.language = self.settings.get_language()
+        self.stone_centering = self.settings.get_stone_centering()
+        self.volume = self.settings.get_volume()
 
     def draw_button(self, screen, text, x, y, width, height, base_color, hover_color, text_color, is_hovered):
         color = hover_color if is_hovered else base_color
@@ -74,6 +78,10 @@ class Settingsmenu:
     def draw_theme_field(self, screen, text, x, y, width, height, base_color, text_color):
         self.theme_input_rect = pygame.Rect(x, y - height // 2, width, height)
         pygame.draw.rect(screen, base_color, (x, y - height // 2, width, height))
+        triangle_mid_point_x = x + width - self.theme_triangle_spacing
+        triangle_mid_point_y = y
+        triangle_vertices = [(triangle_mid_point_x + self.theme_triangle_spacing // 2, triangle_mid_point_y), (triangle_mid_point_x - self.theme_triangle_spacing // 2, triangle_mid_point_y + self.theme_triangle_spacing // 2), (triangle_mid_point_x - self.theme_triangle_spacing // 2, triangle_mid_point_y - self.theme_triangle_spacing // 2)]
+        pygame.draw.polygon(screen, text_color, triangle_vertices, 0)
         text_surface = self.button_font.render(text, True, text_color)
         text_rect = text_surface.get_rect(midleft=(x + self.options_spacing, y))
         screen.blit(text_surface, text_rect)
@@ -81,6 +89,10 @@ class Settingsmenu:
     def draw_language_field(self, screen, text, x, y, width, height, base_color, text_color):
         self.language_input_rect = pygame.Rect(x, y - height // 2, width, height)
         pygame.draw.rect(screen, base_color, (x, y - height // 2, width, height))
+        triangle_mid_point_x = x + width - self.theme_triangle_spacing
+        triangle_mid_point_y = y
+        triangle_vertices = [(triangle_mid_point_x + self.theme_triangle_spacing // 2, triangle_mid_point_y), (triangle_mid_point_x - self.theme_triangle_spacing // 2, triangle_mid_point_y + self.theme_triangle_spacing // 2), (triangle_mid_point_x - self.theme_triangle_spacing // 2, triangle_mid_point_y - self.theme_triangle_spacing // 2)]
+        pygame.draw.polygon(screen, text_color, triangle_vertices, 0)
         text_surface = self.button_font.render(text, True, text_color)
         text_rect = text_surface.get_rect(midleft=(x + self.options_spacing, y))
         screen.blit(text_surface, text_rect)
@@ -133,7 +145,7 @@ class Settingsmenu:
 
         button_width, button_height = 400, 70
         button_spacing = 45
-        button_start_y = 300+460
+        button_start_y = 300 + 460
 
         button_save_rect = pygame.Rect((WIDTH - button_width) // 2 - button_width // 2 - button_spacing, button_start_y, button_width, button_height)
         button_cancel_rect = pygame.Rect((WIDTH - button_width) // 2 + button_width // 2 + button_spacing, button_start_y, button_width, button_height)
@@ -161,6 +173,8 @@ class Settingsmenu:
                         index = THEMES_LIST.index(self.theme_select_text)
                         next_index = (index + 1) % len(THEMES_LIST)
                         self.theme_select_text = THEMES_LIST[next_index]
+                        self.theme = THEMES[self.theme_select_text]
+                        self._init()
                     except ValueError:
                         self.theme_select_text = THEMES_LIST[0]
                 if self.language_input_rect.collidepoint(event.pos):
@@ -178,7 +192,9 @@ class Settingsmenu:
                     self.settings.save_settings(self.username_input_text, self.theme_select_text, self.language_select_text, self.stone_centering, self.volume)
                     self.running = False
                 elif self.is_cancel_hovered:
-                    pygame.mixer.music.set_volume(self.settings.get_volume()/100)
+                    self.load_settings()
+                    self._init()
+                    pygame.mixer.music.set_volume(self.volume/100)
                     self.running = False
                 if event.button == 1:
                     knob_rect = pygame.Rect(self.knob_x - self.knob_radius, self.knob_y - self.knob_radius, self.knob_radius * 2, self.knob_radius * 2)

@@ -96,14 +96,27 @@ WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 FPS = 60
 
 # colors
-REDCOLOR = (255, 0 ,0)
-BLUECOLOR = (0, 0, 255)
 WHITECOLOR = (255, 255, 255)
 BLACKCOLOR = (0, 0, 0)
 GREYCOLOR = (128, 128, 128)
 LIGHTGREYCOLOR = (200, 200, 200)
+REDCOLOR = (255, 0 ,0)
+REDCOLOR2 = (255, 69, 0)
 DARKREDCOLOR = (173, 17, 17)
+BLUECOLOR = (0, 0, 255)
 BROWNCOLOR = (205,133,63)
+
+#theme2
+T2_ORANGECOLOR = (255,165,0)
+T2_BROWNCOLOR1 = (192, 148, 134)
+T2_BROWNCOLOR2 =(150, 92, 74)
+T2_BROWNCOLOR3 = (74, 56, 50)
+
+#theme3
+T3_GREEN1 = (46, 238, 44)
+T3_GREEN2 = (242, 252, 238)
+T3_GREEN3 = (123, 153, 114)
+T3_GREEN4 = (33, 53, 28)
 
 # stone colors
 STONECOLORS = {
@@ -114,10 +127,13 @@ STONECOLORS = {
     8: BLUECOLOR
 }
 
-THEMES_LIST = [
-    'Theme1', 'Theme2', 'Theme3'
-]
+THEMES = {
+    'Theme1': {'backgroundcolor': WHITECOLOR,       'maincolor1': BLACKCOLOR,       'maincolor2': LIGHTGREYCOLOR,   'cancelcolor': REDCOLOR2,   'boardcolor': BROWNCOLOR},
+    'Theme2': {'backgroundcolor': T2_BROWNCOLOR3,   'maincolor1': T2_ORANGECOLOR,   'maincolor2': T2_BROWNCOLOR1,   'cancelcolor': REDCOLOR2,   'boardcolor': BROWNCOLOR},
+    'Theme3': {'backgroundcolor': T3_GREEN1,        'maincolor1': T3_GREEN2,        'maincolor2': T3_GREEN3,        'cancelcolor': T3_GREEN4,   'boardcolor': BROWNCOLOR}
+}
 
-LANGUAGES_LIST = [
-    'English', 'Polski'
-]
+LANGUAGES = {
+    'English':  {'txt1': 'AAA'},
+    'Polski':   {'txt1': 'AAA'}
+}

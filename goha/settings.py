@@ -1,15 +1,25 @@
 import json
 import os
-from .constants import THEMES_LIST, LANGUAGES_LIST
+from .constants import THEMES, LANGUAGES    
+
+THEMES_LIST = [
+    'Theme1', 'Theme2', 'Theme3'
+]
+
+LANGUAGES_LIST = [
+    'English', 'Polski'
+]
 
 class Settings:
     def __init__(self):
         self.file_path = "settings.json"
         self.username = None
         self.selected_theme = None
+        self.theme = None
         self.selected_language = None
         self.stone_centering = None
         self.volume = None
+        self.initialize_settings()
         self.load_settings()
 
     def load_settings(self):
@@ -18,7 +28,9 @@ class Settings:
                 data = json.load(file)
                 self.username = data.get("username", "")
                 self.selected_theme = data.get("theme", "")
+                self.theme = THEMES[self.selected_theme]
                 self.selected_language = data.get("language", "")
+                self.language = LANGUAGES[self.selected_language]
                 self.stone_centering = data.get("stone_centering", "")
                 self.volume = data.get("volume", "")
 
@@ -45,11 +57,17 @@ class Settings:
     def get_username(self):
         return self.username
     
-    def get_theme(self):
+    def get_selected_theme(self):
         return self.selected_theme
     
-    def get_language(self):
+    def get_theme(self):
+        return self.theme
+    
+    def get_selected_language(self):
         return self.selected_language
+    
+    def get_language(self):
+        return self.language
     
     def get_stone_centering(self):
         return self.stone_centering

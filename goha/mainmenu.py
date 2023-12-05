@@ -79,7 +79,7 @@ class Mainmenu:
                     self.gamemenu.running = True
                 elif self.is_settings_hovered:
                     self.currentmenu = 'settingsmenu'
-                    self.settingsmenu._init()
+                    self.settingsmenu.settings.load_settings()
                     self.settingsmenu.running = True
                 elif self.is_info_hovered:
                     self.currentmenu = 'infomenu'
@@ -93,7 +93,6 @@ class Mainmenu:
                     sys.exit()
 
     def run_menu(self):
-        self.settings.initialize_settings()
         self.play_music()
         while True:
             self.background.draw_background()
