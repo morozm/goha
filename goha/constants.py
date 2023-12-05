@@ -1,3 +1,5 @@
+import pygame
+
 ###################################
 #
 # 0000 => 0    empty sqare
@@ -90,6 +92,8 @@ WIDTH, HEIGHT = 1600, 900
 SQUARE_SIZE = min(WIDTH//COLS, HEIGHT//ROWS)
 BOARD_HEIGHT_OFFSET = max(0, (HEIGHT - SQUARE_SIZE*ROWS)//2)
 BOARD_WIDTH_OFFSET = max(0, (WIDTH - SQUARE_SIZE*COLS)//2)
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+FPS = 60
 
 # colors
 REDCOLOR = (255, 0 ,0)
