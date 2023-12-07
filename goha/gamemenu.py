@@ -1,19 +1,19 @@
 import pygame
 import sys
-from .game import Game
 from .settings import Settings
 from .constants import BOARD_HEIGHT_OFFSET, BOARD_WIDTH_OFFSET, SQUARE_SIZE, ROWS, COLS
 
 class Gamemenu:
-    def __init__(self, win):
+    def __init__(self, win, game):
         self.win = win
+        self.game = game
         self.settings = Settings()
         self.load_settings()
         self.running = False
         self._init()
 
     def _init(self):
-        self.game = Game(self.win)
+        pass
 
     def adjust_game_settings(self, difficulty, player_color, handicap, time, board_size):
         self.game.turn = player_color - 1

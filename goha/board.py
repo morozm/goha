@@ -54,7 +54,7 @@ class Board:
                     self.offsets.append([0, 0])
                 
     def load_board(self):
-        self.board = BOARDS[SELECTED_BOARD]
+        self.board = BOARDS[SELECTED_BOARD].copy()
 
     def draw(self, win):
         self.draw_squares(win)

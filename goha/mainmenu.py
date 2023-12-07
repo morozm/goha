@@ -14,12 +14,12 @@ class Mainmenu:
         self.win = win
         self.settings = Settings()
         self.load_settings()
+        self.game = Game(self.win)
         self.background = Background(self.win)
-        self.gamemenu = Gamemenu(self.win)
-        self.newgamemenu = Newgamemenu(self.win)
+        self.gamemenu = Gamemenu(self.win, self.game)
+        self.newgamemenu = Newgamemenu(self.win, self.game)
         self.settingsmenu = Settingsmenu(self.win)
         self.infomenu = Infomenu(self.win)
-        self.game = Game(self.win)
         self.currentmenu = "mainmenu"
         self._init()
 
@@ -119,7 +119,12 @@ class Mainmenu:
                 self.gamemenu.draw_game_menu()
                 self.gamemenu.event_handler()
 
-            elif self.currentmenu == 'newgamemenu' and self.newgamemenu.gamemenu_running == True and self.gamemenu.running == True:
+            elif self.currentmenu == 'newgamemenu' and self.newgamemenu.game_settings_changed == True:
+                # self.game = self.newgamemenu.game
+                self.newgamemenu.game_settings_changed = False
+                self.currentmenu = 'gamemenu'
+                self.gamemenu.load_settings()
+                self.gamemenu.running = True
                 self.gamemenu.draw_game_menu()
                 self.gamemenu.event_handler()
 
@@ -140,6 +145,7 @@ class Mainmenu:
 
             ### MAIN MENU EVENTS ###
             else:
+                self.currentmenu = 'mainmenu'
                 self.draw_main_menu()
                 self.event_handler()
             

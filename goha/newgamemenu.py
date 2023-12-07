@@ -4,12 +4,12 @@ from .settings import Settings
 from .constants import WIDTH
 
 class Newgamemenu:
-    def __init__(self, win):
+    def __init__(self, win, game):
         self.win = win
+        self.game = game
         self.settings = Settings()
         self.load_settings()
         self.running = False
-        self.gamemenu_running = False
         self._init()
 
     def _init(self):
@@ -18,6 +18,7 @@ class Newgamemenu:
         self.handicap = 0
         self.time = 0
         self.board_size = 0
+        self.game_settings_changed = False
 
         self.button_font_size = 36
         self.title_font_size = 100
@@ -113,11 +114,15 @@ class Newgamemenu:
                     self.board_size = (self.board_size + 1) % len(self.language['BoardSizes'])
                 elif self.is_start_hovered:
                     self.running = False
-                    self.gamemenu_running = True
+                    self.game.reset()
+                    self.game.turn = self.player_color + 1
+                    self.game.opponent.difficulty = self.difficulty
+                    self.game.handicap = self.handicap
+                    self.game.time = self.time
+                    self.game.board_size = self.board_size
+                    self.game_settings_changed = True
                 elif self.is_cancel_hovered:
                     self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
-                    self.gamemenu_running = False
-                    print('dupa')

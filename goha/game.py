@@ -19,6 +19,9 @@ class Game:
         self.board = Board()
         self.opponent = Opponent()
         self.turn = BLACK
+        self.handicap = None
+        self.time = None
+        self.board_size = None
         self.gamestate = 'active'
         self.board.find_legal_moves(self.turn)
         self.check_if_legal_moves_exist()

@@ -16,9 +16,6 @@ class Infomenu:
         self.title_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 100)
         self.text_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 20)
 
-        self.text_text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\\eiusmod tempor incididunt nut labore et dolore magna aliqua.\\Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris\\nisi ut aliquip ex ea commodo consequat.\\\\Duis aute irure dolor in reprehenderit in voluptate velit esse\\cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat\\cupidatat non proident, sunt in culpa qui officia deserunt mollit\\anim id est laborum."
-        self.lines_text = self.text_text.split('\\')
-
         self.button_width = 400
         self.button_height = 70
         self.button_spacing = 45
@@ -46,7 +43,9 @@ class Infomenu:
     
     def draw_text(self, screen):
         y_position = 350
-        for line in self.lines_text:
+        text_text = self.language['Info Text']
+        lines_text = text_text.split('\\')
+        for line in lines_text:
             text_surface = self.text_font.render(line, True, self.theme['maincolor1'])
             text_rect = text_surface.get_rect(center=(WIDTH // 2, y_position))
             screen.blit(text_surface, text_rect)
