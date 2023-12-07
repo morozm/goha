@@ -113,8 +113,8 @@ T2_BROWNCOLOR2 =(150, 92, 74)
 T2_BROWNCOLOR3 = (74, 56, 50)
 
 #theme3
-T3_GREEN1 = (46, 238, 44)
-T3_GREEN2 = (242, 252, 238)
+T3_GREEN1 = (242, 252, 238)
+T3_GREEN2 = (46, 238, 44)
 T3_GREEN3 = (123, 153, 114)
 T3_GREEN4 = (33, 53, 28)
 
@@ -127,6 +127,14 @@ STONECOLORS = {
     8: BLUECOLOR
 }
 
+THEMES_LIST = [
+    'Theme1', 'Theme2', 'Theme3'
+]
+
+LANGUAGES_LIST = [
+    'English', 'Polski'
+]
+
 THEMES = {
     'Theme1': {'backgroundcolor': WHITECOLOR,       'maincolor1': BLACKCOLOR,       'maincolor2': LIGHTGREYCOLOR,   'cancelcolor': REDCOLOR2,   'boardcolor': BROWNCOLOR},
     'Theme2': {'backgroundcolor': T2_BROWNCOLOR3,   'maincolor1': T2_ORANGECOLOR,   'maincolor2': T2_BROWNCOLOR1,   'cancelcolor': REDCOLOR2,   'boardcolor': BROWNCOLOR},
@@ -134,6 +142,16 @@ THEMES = {
 }
 
 LANGUAGES = {
-    'English':  {'txt1': 'AAA'},
-    'Polski':   {'txt1': 'AAA'}
+    'English':  {'Continue': 'Continue' , 'New Game': 'New Game', 'Settings': 'Settings',   'Info': 'Info', 'Exit': 'Exit',
+                 'Nick': 'Nick',     'Theme': 'Theme',   'Language': 'Language', 'Stone Centering': 'Stone Centering',       'Volume': 'Volume',
+                 'Difficulty': 'Difficulty',    'Play As': 'Play As',   'Handicap': 'Handicap', 'Time': 'Time', 'Board Size': 'Board Size',
+                 'Difficulties': ['Easy', 'Medium', 'Hard'],    'PlayerColors': ['Black', 'White'], 'Handicaps': ['1', '2', '3'],   'Times': ['No', '10+0', '20+0'],    'BoardSizes': ['9x9', '13x13', '19x19'],
+                 'Themes': ['Theme 1', 'Theme 2', 'Theme 3'], 'Languages': ['English', 'Polish'],
+                 'Save': 'Save',    'Cancel': 'Cancel', 'OK': 'OK', 'Start': 'Start'},
+    'Polski':   {'Continue': 'Kontynuuj', 'New Game': 'Nowa Gra', 'Settings': 'Opcje',      'Info': 'Info', 'Exit': 'Wyjdź',
+                 'Nick': 'Ksywka',  'Theme': 'Motyw',   'Language': 'Język',    'Stone Centering': 'Środkowanie Kamieni',   'Volume': 'Głośność',
+                 'Difficulty': 'Trudność',    'Play As': 'Graj Jako',   'Handicap': 'Handicap', 'Time': 'Czas', 'Board Size': 'Wielkość Planszy',
+                 'Difficulties': ['Łatwy', 'Średni', 'Trudny'], 'PlayerColors': ['Czarny', 'Biały'], 'Handicaps': ['1', '2', '3'],  'Times': ['Nie', '10+0', '20+0'],   'BoardSizes': ['9x9', '13x13', '19x19'],
+                 'Themes': ['Motyw 1', 'Motyw 2', 'Motyw 3'], 'Languages': ['Angielski', 'Polski'],
+                 'Save': 'Zapisz',  'Cancel': 'Anuluj', 'OK': 'OK', 'Start': 'Start'},
 }

@@ -1,24 +1,10 @@
 import json
 import os
-from .constants import THEMES, LANGUAGES    
-
-THEMES_LIST = [
-    'Theme1', 'Theme2', 'Theme3'
-]
-
-LANGUAGES_LIST = [
-    'English', 'Polski'
-]
+from .constants import THEMES, LANGUAGES, THEMES_LIST, LANGUAGES_LIST
 
 class Settings:
     def __init__(self):
         self.file_path = "settings.json"
-        self.username = None
-        self.selected_theme = None
-        self.theme = None
-        self.selected_language = None
-        self.stone_centering = None
-        self.volume = None
         self.initialize_settings()
         self.load_settings()
 
