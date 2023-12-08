@@ -1,9 +1,8 @@
-import pygame, random
-from .constants import ROWS, COLS, EMPTY
+import random
 
 class Opponent:
-    def __init__(self):
-        self.difficulty = 0
+    def __init__(self, difficulty):
+        self.difficulty = difficulty
         self.create_opponent()
 
     def create_opponent(self):

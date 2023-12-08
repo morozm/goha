@@ -16,10 +16,6 @@ class Mainmenu:
         self.load_settings()
         self.game = Game(self.win)
         self.background = Background(self.win)
-        self.gamemenu = Gamemenu(self.win, self.game)
-        self.newgamemenu = Newgamemenu(self.win, self.game)
-        self.settingsmenu = Settingsmenu(self.win)
-        self.infomenu = Infomenu(self.win)
         self.currentmenu = "mainmenu"
         self._init()
 
@@ -86,18 +82,22 @@ class Mainmenu:
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if self.is_continue_hovered:
+                    self.gamemenu = Gamemenu(self.win, self.game)
                     self.currentmenu = 'gamemenu'
                     self.gamemenu.load_settings()
                     self.gamemenu.running = True
                 elif self.is_new_game_hovered:
+                    self.newgamemenu = Newgamemenu(self.win, self.game)
                     self.currentmenu = 'newgamemenu'
                     self.newgamemenu.load_settings()
                     self.newgamemenu.running = True
                 elif self.is_settings_hovered:
+                    self.settingsmenu = Settingsmenu(self.win)
                     self.currentmenu = 'settingsmenu'
                     self.settingsmenu.load_settings()
                     self.settingsmenu.running = True
                 elif self.is_info_hovered:
+                    self.infomenu = Infomenu(self.win)
                     self.currentmenu = 'infomenu'
                     self.infomenu.load_settings()
                     self.infomenu.running = True
@@ -120,9 +120,10 @@ class Mainmenu:
                 self.gamemenu.event_handler()
 
             elif self.currentmenu == 'newgamemenu' and self.newgamemenu.game_settings_changed == True:
-                # self.game = self.newgamemenu.game
+                self.game = Game(self.win, self.newgamemenu.game.opponent_difficulty, self.newgamemenu.game.player_color, self.newgamemenu.game.handicap, self.newgamemenu.game.time, board_size=self.newgamemenu.game.board_size)
                 self.newgamemenu.game_settings_changed = False
                 self.currentmenu = 'gamemenu'
+                self.gamemenu = Gamemenu(self.win, self.game)
                 self.gamemenu.load_settings()
                 self.gamemenu.running = True
                 self.gamemenu.draw_game_menu()

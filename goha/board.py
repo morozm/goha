@@ -1,29 +1,37 @@
 import pygame, random
-from .constants import OFFBOARD, MARKER, EMPTY, LIBERTY, BOARDS, SELECTED_BOARD, OFFSETS_ENABLED, STONECOLORS, BLACKCOLOR, BROWNCOLOR, ROWS, COLS, SQUARE_SIZE, BOARD_HEIGHT_OFFSET, BOARD_WIDTH_OFFSET
+from .constants import OFFBOARD, MARKER, EMPTY, LIBERTY, BOARDS, OFFSETS_ENABLED, STONECOLORS, BLACKCOLOR, BROWNCOLOR, WIDTH, HEIGHT
 from .piecetodraw import PieceToDraw
 
 class Board:
-    def __init__(self):
+    def __init__(self, board_size):
         self.board = []
         self.board_copy = []
         self.block = []
         self.liberties = []
         self.legal_moves = []
         self.offsets = []
-        # self.create_board()
-        self.load_board()
+        self.board_size = board_size
+        self._init()
+        # self.create_board() 
+
+    def _init(self):
+        self.board = BOARDS[self.board_size][0].copy()
+        self.rows, self.cols = BOARDS[self.board_size][1], BOARDS[self.board_size][2]
+        self.square_size = min(WIDTH//self.cols, HEIGHT//self.rows)
+        self.board_height_offset = max(0, (HEIGHT - self.square_size*self.rows)//2)
+        self.board_width_offset = max(0, (WIDTH - self.square_size*self.cols)//2)
         self.create_offsets()
 
     def draw_squares(self, win):
-        win.fill(BLACKCOLOR)
-        pygame.draw.rect(win, BROWNCOLOR, (BOARD_WIDTH_OFFSET, BOARD_HEIGHT_OFFSET, SQUARE_SIZE*COLS, SQUARE_SIZE*ROWS))
-        for row in range(ROWS):
-            pygame.draw.line(win, BLACKCOLOR, (SQUARE_SIZE//2 + BOARD_WIDTH_OFFSET, row*SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_HEIGHT_OFFSET), (SQUARE_SIZE//2 + BOARD_WIDTH_OFFSET + SQUARE_SIZE*(COLS-1), row*SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_HEIGHT_OFFSET))
-        for col in range(COLS):
-            pygame.draw.line(win, BLACKCOLOR, (col*SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_WIDTH_OFFSET, SQUARE_SIZE//2 + BOARD_HEIGHT_OFFSET), (col*SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_WIDTH_OFFSET, SQUARE_SIZE//2 + BOARD_HEIGHT_OFFSET + SQUARE_SIZE*(ROWS-1)))
+        # win.fill(BLACKCOLOR)
+        pygame.draw.rect(win, BROWNCOLOR, (self.board_width_offset, self.board_height_offset, self.square_size*self.cols, self.square_size*self.rows))
+        for row in range(self.rows):
+            pygame.draw.line(win, BLACKCOLOR, (self.square_size//2 + self.board_width_offset, row*self.square_size + self.square_size//2 + self.board_height_offset), (self.square_size//2 + self.board_width_offset + self.square_size*(self.cols-1), row*self.square_size + self.square_size//2 + self.board_height_offset))
+        for col in range(self.cols):
+            pygame.draw.line(win, BLACKCOLOR, (col*self.square_size + self.square_size//2 + self.board_width_offset, self.square_size//2 + self.board_height_offset), (col*self.square_size + self.square_size//2 + self.board_width_offset, self.square_size//2 + self.board_height_offset + self.square_size*(self.rows-1)))
     
     def calc_square(self, row, col):
-        return (row+1)*(COLS+2)+col+1
+        return (row+1)*(self.cols+2)+col+1
 
     def place(self, row, col, turn):
         self.place2(self.calc_square(row, col), turn)
@@ -38,30 +46,30 @@ class Board:
         self.board[square] = stone
 
     def create_board(self):
-        for row in range(ROWS+2):
-            for col in range(COLS+2):
-                if row==0 or row==ROWS+2 or col==0 or col==COLS+2:
+        for row in range(self.rows+2):
+            for col in range(self.cols+2):
+                if row==0 or row==self.rows+2 or col==0 or col==self.cols+2:
                     self.board.append(7)
                 else:
                     self.board.append(0)
 
     def create_offsets(self):
-        for row in range(ROWS+2):
-            for col in range(COLS+2):
+        for row in range(self.rows+2):
+            for col in range(self.cols+2):
                 if (OFFSETS_ENABLED == 1):
-                    self.offsets.append([round(random.randrange(-7, 7)/100 * SQUARE_SIZE), round(random.randrange(-7, 7)/100 * SQUARE_SIZE)])
+                    self.offsets.append([round(random.randrange(-7, 7)/100 * self.square_size), round(random.randrange(-7, 7)/100 * self.square_size)])
                 else:
                     self.offsets.append([0, 0])
                 
     def load_board(self):
-        self.board = BOARDS[SELECTED_BOARD].copy()
+        self.board = BOARDS[self.board_size][0].copy()
 
     def draw(self, win):
         self.draw_squares(win)
         for square in range (len(self.board)):
             piece = self.board[square]
             if piece != 0 and piece != 7:
-                piece = PieceToDraw(square, STONECOLORS[piece])
+                piece = PieceToDraw(square, STONECOLORS[piece], self.rows, self.cols, self.square_size, self.board_height_offset, self.board_width_offset)
                 piece.draw(self.offsets[square], win)
                 # piece.draw([0, 0], win) # without offsets
                     
@@ -80,10 +88,10 @@ class Board:
         if piece and (piece & color) and (piece & MARKER) == 0:
             self.block.append(square)
             self.board[square] |= MARKER
-            self.count(square - (COLS+2), color)    # walk north
-            self.count(square - 1, color)           # walk east
-            self.count(square + (COLS+2), color)    # walk south
-            self.count(square + 1, color)           # walk west
+            self.count(square - (self.cols+2), color)   # walk north
+            self.count(square - 1, color)               # walk east
+            self.count(square + (self.cols+2), color)   # walk south
+            self.count(square + 1, color)               # walk west
         elif piece == EMPTY:
             self.board[square] |= LIBERTY
             self.liberties.append(square)
@@ -103,7 +111,7 @@ class Board:
 
     def restore_board(self):
         self.clear_groups()
-        for square in range((ROWS+2) * (COLS+2)):
+        for square in range((self.rows+2) * (self.cols+2)):
             if self.board[square] != OFFBOARD: 
                 self.board[square] &= 3
 
@@ -128,7 +136,7 @@ class Board:
             else:
                 self.place2(square, color)
                 
-                neighbours = [square - (COLS+2), square - 1, square + (COLS+2), square + 1] # captures but only for neighbours
+                neighbours = [square - (self.cols+2), square - 1, square + (self.cols+2), square + 1] # captures but only for neighbours
                 for square2 in neighbours:
                     piece = self.board[square2]
                     if piece == OFFBOARD:
@@ -146,7 +154,7 @@ class Board:
                 self.board = self.board_copy.copy()
 
     def detect_edge(self, square):
-        neighbours = [square - (COLS+2), square - 1, square + (COLS+2), square + 1]
+        neighbours = [square - (self.cols+2), square - 1, square + (self.cols+2), square + 1]
         for neighbour in neighbours:
             if self.board[neighbour] == OFFBOARD: 
                 return 1

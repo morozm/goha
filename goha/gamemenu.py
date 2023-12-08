@@ -1,7 +1,6 @@
 import pygame
 import sys
 from .settings import Settings
-from .constants import BOARD_HEIGHT_OFFSET, BOARD_WIDTH_OFFSET, SQUARE_SIZE, ROWS, COLS
 
 class Gamemenu:
     def __init__(self, win, game):
@@ -13,7 +12,11 @@ class Gamemenu:
         self._init()
 
     def _init(self):
-        pass
+        self.rows = self.game.board.rows
+        self.cols = self.game.board.cols
+        self.square_size = self.game.board.square_size
+        self.board_height_offset = self.game.board.board_height_offset
+        self.board_width_offset = self.game.board.board_width_offset
 
     def adjust_game_settings(self, difficulty, player_color, handicap, time, board_size):
         self.game.turn = player_color - 1
@@ -30,9 +33,9 @@ class Gamemenu:
 
     def get_row_col_from_mouse(self, pos):
         x, y = pos
-        row = (y - BOARD_HEIGHT_OFFSET) // SQUARE_SIZE
-        col = (x - BOARD_WIDTH_OFFSET) // SQUARE_SIZE
-        if (row<0 or col<0 or row>=ROWS or col>=COLS):
+        row = (y - self.board_height_offset) // self.square_size
+        col = (x - self.board_width_offset) // self.square_size
+        if (row<0 or col<0 or row>=self.rows or col>=self.cols):
             return False
         return row, col
     

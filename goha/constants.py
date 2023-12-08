@@ -71,13 +71,12 @@ board_19x19 = [
 ]
 
 BOARDS = {
-    9:  board_9x9,
-    13: board_13x13,
-    19: board_19x19
+    0: [board_9x9, 9, 9],
+    1: [board_13x13, 13, 13],
+    2: [board_19x19, 19, 19]
 }
-SELECTED_BOARD = 9
+SELECTED_BOARD = 0
 OFFSETS_ENABLED = 1
-ROWS, COLS = SELECTED_BOARD, SELECTED_BOARD
 
 # stones
 EMPTY = 0
@@ -89,9 +88,6 @@ LIBERTY = 8
 
 # pixel sizes
 WIDTH, HEIGHT = 1600, 900
-SQUARE_SIZE = min(WIDTH//COLS, HEIGHT//ROWS)
-BOARD_HEIGHT_OFFSET = max(0, (HEIGHT - SQUARE_SIZE*ROWS)//2)
-BOARD_WIDTH_OFFSET = max(0, (WIDTH - SQUARE_SIZE*COLS)//2)
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 FPS = 60
 
