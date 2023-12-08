@@ -1,6 +1,7 @@
 import pygame, random
-from .constants import OFFBOARD, MARKER, EMPTY, LIBERTY, BOARDS, OFFSETS_ENABLED, STONECOLORS, BLACKCOLOR, BROWNCOLOR, WIDTH, HEIGHT
+from .constants import OFFBOARD, MARKER, EMPTY, LIBERTY, BOARDS, STONECOLORS, BLACKCOLOR, BROWNCOLOR, WIDTH, HEIGHT
 from .piecetodraw import PieceToDraw
+from .settings import Settings
 
 class Board:
     def __init__(self, board_size):
@@ -11,6 +12,8 @@ class Board:
         self.legal_moves = []
         self.offsets = []
         self.board_size = board_size
+        self.settings = Settings()
+        self.load_settings()
         self._init()
         # self.create_board() 
 
@@ -21,6 +24,10 @@ class Board:
         self.board_height_offset = max(0, (HEIGHT - self.square_size*self.rows)//2)
         self.board_width_offset = max(0, (WIDTH - self.square_size*self.cols)//2)
         self.create_offsets()
+
+    def load_settings(self):
+        self.settings.load_settings()
+        self.stone_centering = self.settings.get_stone_centering()
 
     def draw_squares(self, win):
         # win.fill(BLACKCOLOR)
@@ -56,10 +63,7 @@ class Board:
     def create_offsets(self):
         for row in range(self.rows+2):
             for col in range(self.cols+2):
-                if (OFFSETS_ENABLED == 1):
-                    self.offsets.append([round(random.randrange(-7, 7)/100 * self.square_size), round(random.randrange(-7, 7)/100 * self.square_size)])
-                else:
-                    self.offsets.append([0, 0])
+                self.offsets.append([round(random.randrange(-7, 7)/100 * self.square_size), round(random.randrange(-7, 7)/100 * self.square_size)])
                 
     def load_board(self):
         self.board = BOARDS[self.board_size][0].copy()
@@ -70,8 +74,10 @@ class Board:
             piece = self.board[square]
             if piece != 0 and piece != 7:
                 piece = PieceToDraw(square, STONECOLORS[piece], self.rows, self.cols, self.square_size, self.board_height_offset, self.board_width_offset)
-                piece.draw(self.offsets[square], win)
-                # piece.draw([0, 0], win) # without offsets
+                if (self.stone_centering == 0):
+                    piece.draw(self.offsets[square], win)
+                else:
+                    piece.draw([0, 0], win)
                     
     def remove(self, pieces): # unused
         for piece in pieces:

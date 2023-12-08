@@ -20,6 +20,8 @@ class Game:
         self.gamestate = 'active'
         self.board.find_legal_moves(self.turn)
         self.check_if_legal_moves_exist()
+        self.place_whole_handicap()
+        self.opponent_makes_first_move()
     
     def update(self):
         self.board.draw(self.win)
@@ -54,6 +56,11 @@ class Game:
         if self.gamestate == 'active':
             self.opponent.gen_move(self.turn, self.board)
 
+    def opponent_makes_first_move(self):
+        if self.gamestate == 'active' and self.player_color == 1:
+            self.opponent_moves()
+            self.process_move()
+
     # def draw_valid_moves(self, moves): #unused
     #     for move in moves:
     #         row, col = move
@@ -72,3 +79,42 @@ class Game:
             return False
         else:
             return True
+        
+    def place_whole_handicap(self):
+        self.board.find_legal_moves(self.turn)
+        self.check_if_legal_moves_exist()
+        self.handicap_copy = self.handicap
+        if self.board_size == 0:
+            self.place_handicap_stone(2, 6)
+            self.place_handicap_stone(6, 2)
+            self.place_handicap_stone(6, 6)
+            self.place_handicap_stone(2, 2)
+            self.place_handicap_stone(4, 4)
+            self.place_handicap_stone(4, 2)
+            self.place_handicap_stone(4, 6)
+            self.place_handicap_stone(2, 4)
+            self.place_handicap_stone(6, 4)
+        elif self.board_size == 1:
+            self.place_handicap_stone(3, 9)
+            self.place_handicap_stone(9, 3)
+            self.place_handicap_stone(9, 9)
+            self.place_handicap_stone(3, 3)
+            self.place_handicap_stone(6, 6)
+            self.place_handicap_stone(6, 3)
+            self.place_handicap_stone(6, 9)
+            self.place_handicap_stone(3, 6)
+            self.place_handicap_stone(9, 6)
+        elif self.board_size == 2:
+            self.place_handicap_stone(3,  15)
+            self.place_handicap_stone(15, 3 )
+            self.place_handicap_stone(15, 15)
+            self.place_handicap_stone(3,  3 )
+            self.place_handicap_stone(9,  9 )
+            self.place_handicap_stone(9,  3 )
+            self.place_handicap_stone(9,  15)
+            self.place_handicap_stone(3,  9 )
+            self.place_handicap_stone(15, 9 )
+    def place_handicap_stone(self, row, col):
+        if self.handicap_copy > 0:
+            self.place(row, col)
+            self.handicap_copy -= 1

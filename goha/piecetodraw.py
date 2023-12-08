@@ -1,5 +1,5 @@
 import pygame
-from .constants import STONECOLORS, GREYCOLOR
+from .constants import GREYCOLOR
 
 class PieceToDraw:
     PADDING = 15    #percents

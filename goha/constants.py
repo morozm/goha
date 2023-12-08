@@ -76,7 +76,6 @@ BOARDS = {
     2: [board_19x19, 19, 19]
 }
 SELECTED_BOARD = 0
-OFFSETS_ENABLED = 1
 
 # stones
 EMPTY = 0
@@ -141,14 +140,14 @@ LANGUAGES = {
     'English':  {'Continue': 'Continue' , 'New Game': 'New Game', 'Settings': 'Settings',   'Info': 'Info', 'Exit': 'Exit',
                  'Nick': 'Nick',     'Theme': 'Theme',   'Language': 'Language', 'Stone Centering': 'Stone Centering',       'Volume': 'Volume',
                  'Difficulty': 'Difficulty',    'Play As': 'Play As',   'Handicap': 'Handicap', 'Time': 'Time', 'Board Size': 'Board Size',
-                 'Difficulties': ['Easy', 'Medium', 'Hard'],    'PlayerColors': ['Black', 'White'], 'Handicaps': ['1', '2', '3'],   'Times': ['No', '10+0', '20+0'],    'BoardSizes': ['9x9', '13x13', '19x19'],
+                 'Difficulties': ['Easy', 'Medium', 'Hard'],    'PlayerColors': ['Black', 'White'], 'Handicaps': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],   'Times': ['No', '10+0', '20+0'],    'BoardSizes': ['9x9', '13x13', '19x19'],
                  'Themes': ['Theme 1', 'Theme 2', 'Theme 3'], 'Languages': ['English', 'Polish'],
                  'Info Text': '''Welcome to the game of Go! This ancient Chinese board game\\is a combination of science, art and sport. Try to cover as\\much territory as possible. Capture your opponent's stones,\\but don't let him capture yours!\\\\Hi, my name is Miłosz Moroz and I've created this program\\as a part of my Engineering Thesis. Try different opponents,\\different board sizes and adjust the app settings to your preferences.\\But above all, don't forget the most important thing - to have fun!''',
                  'Save': 'Save',    'Cancel': 'Cancel', 'OK': 'OK', 'Start': 'Start'},
     'Polski':   {'Continue': 'Kontynuuj', 'New Game': 'Nowa Gra', 'Settings': 'Opcje',      'Info': 'Info', 'Exit': 'Wyjdź',
                  'Nick': 'Ksywka',  'Theme': 'Motyw',   'Language': 'Język',    'Stone Centering': 'Środkowanie Kamieni',   'Volume': 'Głośność',
                  'Difficulty': 'Trudność',    'Play As': 'Graj Jako',   'Handicap': 'Handicap', 'Time': 'Czas', 'Board Size': 'Wielkość Planszy',
-                 'Difficulties': ['Łatwy', 'Średni', 'Trudny'], 'PlayerColors': ['Czarny', 'Biały'], 'Handicaps': ['1', '2', '3'],  'Times': ['Nie', '10+0', '20+0'],   'BoardSizes': ['9x9', '13x13', '19x19'],
+                 'Difficulties': ['Łatwy', 'Średni', 'Trudny'], 'PlayerColors': ['Czarny', 'Biały'], 'Handicaps': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],  'Times': ['Nie', '10+0', '20+0'],   'BoardSizes': ['9x9', '13x13', '19x19'],
                  'Themes': ['Motyw 1', 'Motyw 2', 'Motyw 3'], 'Languages': ['Angielski', 'Polski'],
                  'Info Text': '''Witaj w grze w go! Ta starochińska gra planszowa to\\połączenie nauki, sztuki i sportu. Postaraj się otoczyć\\jak największe terytorium. Zbijaj kamienie przeciwnika,\\lecz nie pozwól, by on zbił twoje!\\\\Hej, jestem Miłosz Moroz i to właśnie ja stworzyłem ten\\program w ramach pracy inżynierskiej. Wypróbuj różnych\\przeciwników, różne rozmiary planszy i dostosuj ustawienia\\aplikacji według swoich preferencji. Lecz przede wszystkim\\nie zapomnij o najważniejszym - dobrze się bawić!''',
                  'Save': 'Zapisz',  'Cancel': 'Anuluj', 'OK': 'OK', 'Start': 'Start'},

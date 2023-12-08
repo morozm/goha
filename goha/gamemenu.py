@@ -22,6 +22,7 @@ class Gamemenu:
         self.game.turn = player_color - 1
 
     def load_settings(self):
+        self.game.board.load_settings()
         self.settings.load_settings()
         self.username_input_text = self.settings.get_username()
         self.theme_select_text = self.settings.get_selected_theme()

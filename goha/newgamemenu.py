@@ -114,8 +114,8 @@ class Newgamemenu:
                     self.board_size = (self.board_size + 1) % len(self.language['BoardSizes'])
                 elif self.is_start_hovered:
                     self.running = False
-                    self.game.turn = self.player_color + 1
-                    self.game.opponent.difficulty = self.difficulty
+                    self.game.opponent_difficulty = self.difficulty
+                    self.game.player_color = self.player_color
                     self.game.handicap = self.handicap
                     self.game.time = self.time
                     self.game.board_size = self.board_size
