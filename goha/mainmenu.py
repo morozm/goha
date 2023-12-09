@@ -1,5 +1,7 @@
 import pygame
 import sys
+import random
+import os
 from .settings import Settings
 from .background import Background
 from .gamemenu import Gamemenu
@@ -42,9 +44,14 @@ class Mainmenu:
         self.language = self.settings.get_language()
 
     def play_music(self):
-        pygame.mixer.music.load("goha/assets/backgroundmusic.mp3")
+        self.current_music_index = 0
+        self.music_files = [file for file in os.listdir('goha/music') if file.endswith((".mp3", ".wav"))]
+        random.shuffle(self.music_files)
+        self.music_end_event = pygame.USEREVENT + 1
+        pygame.mixer.music.set_endevent(self.music_end_event)
+        pygame.mixer.music.load(os.path.join('goha/music', self.music_files[self.current_music_index]))
         pygame.mixer.music.set_volume(self.settings.get_volume()/100)
-        pygame.mixer.music.play(-1)
+        pygame.mixer.music.play()
 
     def draw_button(self, screen, text, x, y, width, height, base_color, hover_color, text_color, is_hovered):
         color = hover_color if is_hovered else base_color
@@ -80,6 +87,10 @@ class Mainmenu:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == self.music_end_event:
+                    self.current_music_index = (self.current_music_index + 1) % len(self.music_files)
+                    pygame.mixer.music.load(os.path.join('goha/music', self.music_files[self.current_music_index]))
+                    pygame.mixer.music.play()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if self.is_continue_hovered:
                     self.gamemenu = Gamemenu(self.win, self.game)

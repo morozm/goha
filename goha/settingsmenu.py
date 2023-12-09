@@ -199,6 +199,7 @@ class Settingsmenu:
                     self.load_settings()
                     self._init()
                     pygame.mixer.music.set_volume(self.volume/100)
+                    pygame.mixer.Channel(1).set_volume(self.volume/100)
                     self.running = False
                 if event.button == 1:
                     knob_rect = pygame.Rect(self.knob_x - self.knob_radius, self.knob_y - self.knob_radius, self.knob_radius * 2, self.knob_radius * 2)
@@ -212,6 +213,7 @@ class Settingsmenu:
                     self.knob_x = event.pos[0]
                     self.volume = max(0, min((self.knob_x - (WIDTH // 2 + self.options_spacing_horizontal // 2)) // (self.options_input_length // 100), 100))
                     pygame.mixer.music.set_volume(self.volume/100)
+                    pygame.mixer.Channel(1).set_volume(self.volume/100)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False

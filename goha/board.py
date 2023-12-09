@@ -130,6 +130,7 @@ class Board:
                 self.count(square, color)
                 if len(self.liberties) == 0:
                     self.clear_block()
+                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/stonescaptured.wav'))
                 self.restore_board()
 
     def find_legal_moves(self, color):
