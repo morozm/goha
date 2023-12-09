@@ -2,6 +2,8 @@ import pygame, random
 from .constants import OFFBOARD, MARKER, EMPTY, LIBERTY, BOARDS, STONECOLORS, BLACKCOLOR, BROWNCOLOR, WIDTH, HEIGHT
 from .piecetodraw import PieceToDraw
 from .settings import Settings
+BOARD_MENU_SPACE = 50
+BOARD_EDGE_SPACE = 20
 
 class Board:
     def __init__(self, board_size):
@@ -13,6 +15,7 @@ class Board:
         self.offsets = []
         self.board_size = board_size
         self.settings = Settings()
+        self.texture = pygame.image.load("goha/textures/texture2.jpg")
         self.load_settings()
         self._init()
         # self.create_board() 
@@ -20,7 +23,7 @@ class Board:
     def _init(self):
         self.board = BOARDS[self.board_size][0].copy()
         self.rows, self.cols = BOARDS[self.board_size][1], BOARDS[self.board_size][2]
-        self.square_size = min(WIDTH//self.cols, HEIGHT//self.rows)
+        self.square_size = min((WIDTH-BOARD_MENU_SPACE)//self.cols, (HEIGHT-BOARD_MENU_SPACE)//self.rows)
         self.board_height_offset = max(0, (HEIGHT - self.square_size*self.rows)//2)
         self.board_width_offset = max(0, (WIDTH - self.square_size*self.cols)//2)
         self.create_offsets()
@@ -30,12 +33,13 @@ class Board:
         self.stone_centering = self.settings.get_stone_centering()
 
     def draw_squares(self, win):
-        # win.fill(BLACKCOLOR)
-        pygame.draw.rect(win, BROWNCOLOR, (self.board_width_offset, self.board_height_offset, self.square_size*self.cols, self.square_size*self.rows))
+        pygame.draw.rect(win, BLACKCOLOR, ((self.board_width_offset-3, self.board_height_offset-3, self.square_size*self.cols+6, self.square_size*self.rows+6)))
+        win.blit(self.texture, pygame.Rect((self.board_width_offset, self.board_height_offset, self.square_size*self.cols, self.square_size*self.rows), border_radius = 100), pygame.Rect((0, 0, self.square_size*self.cols, self.square_size*self.rows), border_radius = 100))
+        # pygame.draw.rect(win, BROWNCOLOR, ((self.board_width_offset, self.board_height_offset, self.square_size*self.cols, self.square_size*self.rows)), border_radius = 40)
         for row in range(self.rows):
-            pygame.draw.line(win, BLACKCOLOR, (self.square_size//2 + self.board_width_offset, row*self.square_size + self.square_size//2 + self.board_height_offset), (self.square_size//2 + self.board_width_offset + self.square_size*(self.cols-1), row*self.square_size + self.square_size//2 + self.board_height_offset))
+            pygame.draw.line(win, BLACKCOLOR, (self.square_size//2 + self.board_width_offset, row*self.square_size + self.square_size//2 + self.board_height_offset), (self.square_size//2 + self.board_width_offset + self.square_size*(self.cols-1), row*self.square_size + self.square_size//2 + self.board_height_offset), 3)
         for col in range(self.cols):
-            pygame.draw.line(win, BLACKCOLOR, (col*self.square_size + self.square_size//2 + self.board_width_offset, self.square_size//2 + self.board_height_offset), (col*self.square_size + self.square_size//2 + self.board_width_offset, self.square_size//2 + self.board_height_offset + self.square_size*(self.rows-1)))
+            pygame.draw.line(win, BLACKCOLOR, (col*self.square_size + self.square_size//2 + self.board_width_offset, self.square_size//2 + self.board_height_offset), (col*self.square_size + self.square_size//2 + self.board_width_offset, self.square_size//2 + self.board_height_offset + self.square_size*(self.rows-1)), 3)
     
     def calc_square(self, row, col):
         return (row+1)*(self.cols+2)+col+1

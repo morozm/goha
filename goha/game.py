@@ -41,9 +41,11 @@ class Game:
                 return True
             else:
                 print('place is illegal')
+                pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/incorrectmove.wav'))
                 return False
         else:
             print('place is occupied')
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/incorrectmove.wav'))
             return False
     
     def process_move(self):
