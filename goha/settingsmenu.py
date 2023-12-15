@@ -158,8 +158,8 @@ class Settingsmenu:
         self.draw_button(self.win, self.language['Save'],   (WIDTH - self.button_width) // 2 - self.button_width // 2 - self.button_spacing, self.button_start_y, self.button_width, self.button_height, self.theme['backgroundcolor'], self.theme['maincolor2'],  self.theme['maincolor1'], self.is_save_hovered)
         self.draw_button(self.win, self.language['Cancel'], (WIDTH - self.button_width) // 2 + self.button_width // 2 + self.button_spacing, self.button_start_y, self.button_width, self.button_height, self.theme['backgroundcolor'], self.theme['cancelcolor'], self.theme['maincolor1'], self.is_cancel_hovered)
 
-    def event_handler(self):
-        for event in pygame.event.get():
+    def event_handler(self, events):
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()

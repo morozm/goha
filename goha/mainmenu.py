@@ -47,11 +47,17 @@ class Mainmenu:
         self.current_music_index = 0
         self.music_files = [file for file in os.listdir('goha/music') if file.endswith((".mp3", ".wav"))]
         random.shuffle(self.music_files)
-        self.music_end_event = pygame.USEREVENT + 1
-        pygame.mixer.music.set_endevent(self.music_end_event)
+        pygame.mixer.music.set_endevent(pygame.USEREVENT + 1)
         pygame.mixer.music.load(os.path.join('goha/music', self.music_files[self.current_music_index]))
         pygame.mixer.music.set_volume(self.settings.get_volume()/100)
         pygame.mixer.music.play()
+
+    def start_next_music(self):
+        for event in self.events:
+            if event.type == pygame.USEREVENT + 1:
+                    self.current_music_index = (self.current_music_index + 1) % len(self.music_files)
+                    pygame.mixer.music.load(os.path.join('goha/music', self.music_files[self.current_music_index]))
+                    pygame.mixer.music.play()
 
     def draw_button(self, screen, text, x, y, width, height, base_color, hover_color, text_color, is_hovered):
         color = hover_color if is_hovered else base_color
@@ -82,15 +88,11 @@ class Mainmenu:
         self.draw_button(self.win, self.language['Info'],       (WIDTH - self.button_width) // 2, self.button_start_y + 3 * (self.button_height + self.button_spacing), self.button_width, self.button_height, self.theme['backgroundcolor'], self.theme['maincolor2'],     self.theme['maincolor1'], self.is_info_hovered)
         self.draw_button(self.win, self.language['Exit'],       (WIDTH - self.button_width) // 2, self.button_start_y + 4 * (self.button_height + self.button_spacing), self.button_width, self.button_height, self.theme['backgroundcolor'], self.theme['cancelcolor'],    self.theme['maincolor1'], self.is_exit_hovered)
 
-    def event_handler(self):
-        for event in pygame.event.get():
+    def event_handler(self, events):
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == self.music_end_event:
-                    self.current_music_index = (self.current_music_index + 1) % len(self.music_files)
-                    pygame.mixer.music.load(os.path.join('goha/music', self.music_files[self.current_music_index]))
-                    pygame.mixer.music.play()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if self.is_continue_hovered:
                     self.gamemenu = Gamemenu(self.win, self.game)
@@ -123,12 +125,14 @@ class Mainmenu:
     def run_menu(self):
         self.play_music()
         while True:
+            self.events = pygame.event.get()
             self.background.draw_background()
+            self.start_next_music()
 
             ### GAME MENU EVENTS ###
             if self.currentmenu == 'gamemenu' and self.gamemenu.running == True:
                 self.gamemenu.draw_game_menu()
-                self.gamemenu.event_handler()
+                self.gamemenu.event_handler(self.events)
 
             elif self.currentmenu == 'newgamemenu' and self.newgamemenu.game_settings_changed == True:
                 self.game = Game(self.win, self.newgamemenu.game.opponent_difficulty, self.newgamemenu.game.player_color, self.newgamemenu.game.handicap, self.newgamemenu.game.time, board_size=self.newgamemenu.game.board_size)
@@ -138,28 +142,28 @@ class Mainmenu:
                 self.gamemenu.load_settings()
                 self.gamemenu.running = True
                 self.gamemenu.draw_game_menu()
-                self.gamemenu.event_handler()
+                self.gamemenu.event_handler(self.events)
 
             ### NEW GAME MENU EVENTS ###
             elif self.currentmenu == 'newgamemenu' and self.newgamemenu.running == True:
                 self.newgamemenu.draw_new_game_menu()
-                self.newgamemenu.event_handler()
+                self.newgamemenu.event_handler(self.events)
 
             ### SETTINGS MENU EVENTS ###
             elif self.currentmenu == 'settingsmenu' and self.settingsmenu.running == True:
                 self.settingsmenu.draw_settings_menu()
-                self.settingsmenu.event_handler()
+                self.settingsmenu.event_handler(self.events)
                 
             ### INFO MENU EVENTS ###
             elif self.currentmenu == 'infomenu' and self.infomenu.running == True:
                 self.infomenu.draw_info_menu()
-                self.infomenu.event_handler()
+                self.infomenu.event_handler(self.events)
 
             ### MAIN MENU EVENTS ###
             else:
                 self.currentmenu = 'mainmenu'
                 self.draw_main_menu()
-                self.event_handler()
+                self.event_handler(self.events)
             
             # Refresh window
             pygame.display.flip()

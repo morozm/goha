@@ -59,8 +59,8 @@ class Infomenu:
         self.is_ok_hovered = self.button_ok_rect.collidepoint(mouse_x, mouse_y)
         self.draw_button(self.win, self.language['OK'], (WIDTH - self.button_width) // 2, self.button_start_y, self.button_width, self.button_height, self.theme['backgroundcolor'], self.theme['maincolor2'], self.theme['maincolor1'], self.is_ok_hovered)
 
-    def event_handler(self):
-        for event in pygame.event.get():
+    def event_handler(self, events):
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()

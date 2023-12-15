@@ -46,8 +46,8 @@ class Gamemenu:
             self.running = False
         self.game.update()
 
-    def event_handler(self):
-        for event in pygame.event.get():
+    def event_handler(self, events):
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
