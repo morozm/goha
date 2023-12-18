@@ -41,6 +41,41 @@ class Board:
         for col in range(self.cols):
             pygame.draw.line(win, BLACKCOLOR, (col*self.square_size + self.square_size//2 + self.board_width_offset, self.square_size//2 + self.board_height_offset), (col*self.square_size + self.square_size//2 + self.board_width_offset, self.square_size//2 + self.board_height_offset + self.square_size*(self.rows-1)), 3)
     
+    def draw_dots(self, win):
+        if (self.board_size == 0):
+            self.draw_dot(win, 2, 6)
+            self.draw_dot(win, 6, 2)
+            self.draw_dot(win, 6, 6)
+            self.draw_dot(win, 2, 2)
+            self.draw_dot(win, 4, 4)
+            self.draw_dot(win, 4, 2)
+            self.draw_dot(win, 4, 6)
+            self.draw_dot(win, 2, 4)
+            self.draw_dot(win, 6, 4)
+        elif self.board_size == 1:
+            self.draw_dot(win, 3, 9)
+            self.draw_dot(win, 9, 3)
+            self.draw_dot(win, 9, 9)
+            self.draw_dot(win, 3, 3)
+            self.draw_dot(win, 6, 6)
+            self.draw_dot(win, 6, 3)
+            self.draw_dot(win, 6, 9)
+            self.draw_dot(win, 3, 6)
+            self.draw_dot(win, 9, 6)
+        elif self.board_size == 2:
+            self.draw_dot(win, 3,  15)
+            self.draw_dot(win, 15, 3 )
+            self.draw_dot(win, 15, 15)
+            self.draw_dot(win, 3,  3 )
+            self.draw_dot(win, 9,  9 )
+            self.draw_dot(win, 9,  3 )
+            self.draw_dot(win, 9,  15)
+            self.draw_dot(win, 3,  9 )
+            self.draw_dot(win, 15, 9 )
+
+    def draw_dot(self, win, row, col):
+        pygame.draw.circle(win, BLACKCOLOR, (col*self.square_size + self.square_size//2 + self.board_width_offset, row*self.square_size + self.square_size//2 + self.board_height_offset), 10)
+
     def calc_square(self, row, col):
         return (row+1)*(self.cols+2)+col+1
 
@@ -74,6 +109,7 @@ class Board:
 
     def draw(self, win):
         self.draw_squares(win)
+        self.draw_dots(win)
         for square in range (len(self.board)):
             piece = self.board[square]
             if piece != 0 and piece != 7:
@@ -171,7 +207,7 @@ class Board:
                 return 1
         return 0
 
-    def evaluate(self, color):
+    def evaluate_0(self, color): # find a liberty with best count
         best_count = 0
         best_liberty = False
         # loop over the liberties within the list
@@ -181,7 +217,7 @@ class Board:
             # count new liberties
             self.count(liberty, color)
             # found more liberties
-            if len(self.liberties) > best_count and not self.detect_edge(liberty) and liberty in self.legal_moves:
+            if len(self.liberties) > best_count and liberty in self.legal_moves:
                 best_liberty = liberty
                 best_count = len(self.liberties)     
             # restore board
@@ -190,3 +226,53 @@ class Board:
             self.board[liberty] = EMPTY
         # return best liberty
         return best_liberty
+    
+    def evaluate_1(self, color): # find a liberty with best count > 1 AND not on the edge
+        best_count = 1
+        best_liberty = False
+        for liberty in self.liberties:
+            self.board[liberty] = color
+            self.count(liberty, color)
+            if len(self.liberties) > best_count and not self.detect_edge(liberty) and liberty in self.legal_moves:
+                best_liberty = liberty
+                best_count = len(self.liberties)     
+            self.restore_board()
+            self.board[liberty] = EMPTY
+        return best_liberty
+    
+    def evaluate_2(self, color): # find a liberty with best count BUT it cant have less than 2 liberties itself
+        best_count = 0
+        best_liberty = False
+        current_liberties = self.liberties.copy()
+        for liberty in current_liberties:
+            self.restore_board()
+            self.board[liberty] = color    
+            self.count(liberty, color)
+            liberties_length = len(self.liberties)
+            # self.print_board() # test
+            if liberties_length > best_count:
+                self.restore_board()
+                self.board[liberty] = 3 - color
+                self.count(liberty, 3 - color)
+                # self.print_board() # test
+                if len(self.liberties) > 1:
+                    best_liberty = liberty
+                    best_count = liberties_length
+            self.restore_board()
+            self.board[liberty] = EMPTY
+        return best_liberty
+    
+    def print_board(self):
+        files = '     a b c d e f g h j k l m n o p q r s t'
+        pieces = '.#o  bw +'
+        for row in range(BOARDS[self.board_size][1] + 2):
+            for col in range(BOARDS[self.board_size][1] + 2):
+                square = row * (BOARDS[self.board_size][1] + 2) + col
+                stone = self.board[square]
+                if col == 0 and row > 0 and row < BOARDS[self.board_size][1] + 2 - 1:
+                    rank = BOARDS[self.board_size][1] + 2 - 1 - row
+                    space = '  ' if len(self.board) == 121 else '   '
+                    print((space if rank < 10 else '  ') + str(rank), end='')
+                print(pieces[stone] + ' ', end='')    
+            print()
+        print(('' if len(self.board) == 121 else ' ') + files[0:(BOARDS[self.board_size][1] + 2)*2] + '\n')

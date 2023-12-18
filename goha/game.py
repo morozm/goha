@@ -7,7 +7,7 @@ class Game:
     def __init__(self, win, opponent_difficulty=0, player_color=0, handicap=0, time=0, board_size=0):
         self.win = win
         self.opponent_difficulty = opponent_difficulty
-        self.player_color = player_color
+        self.player_color = player_color + 1
         self.handicap = handicap
         self.time = time
         self.board_size = board_size
@@ -38,6 +38,7 @@ class Game:
         if piece == 0:
             if self.board.calc_square(row, col) in self.board.legal_moves:
                 self.board.place(row, col, self.turn)
+                pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/stoneplaced.wav'))
                 return True
             else:
                 print('place is illegal')
@@ -59,7 +60,7 @@ class Game:
             self.opponent.gen_move(self.turn, self.board)
 
     def opponent_makes_first_move(self):
-        if self.gamestate == 'active' and self.player_color == 1:
+        if self.gamestate == 'active' and self.player_color == 2:
             self.opponent_moves()
             self.process_move()
 

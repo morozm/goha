@@ -57,8 +57,10 @@ class Gamemenu:
                     row, col = self.get_row_col_from_mouse(pos)
                     if self.game.place(row, col):
                         self.game.process_move()
-                        self.game.opponent_moves() # comment these 2 lines to play solo
-                        self.game.process_move()   # comment these 2 lines to play solo
+                        self.game.board.print_board()
+                        self.game.opponent_moves()
+                        self.game.process_move()
+                        self.game.board.print_board()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False     

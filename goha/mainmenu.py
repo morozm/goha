@@ -51,6 +51,7 @@ class Mainmenu:
         pygame.mixer.music.load(os.path.join('goha/music', self.music_files[self.current_music_index]))
         pygame.mixer.music.set_volume(self.settings.get_volume()/100)
         pygame.mixer.music.play()
+        pygame.mixer.Channel(1).set_volume(self.settings.get_volume()/100)
 
     def start_next_music(self):
         for event in self.events:

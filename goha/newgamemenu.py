@@ -25,7 +25,7 @@ class Newgamemenu:
         self.button_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", self.button_font_size)
         self.title_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", self.title_font_size)
 
-        self.options = ["Difficulty", "Play As", "Handicap", "Time", "Board Size"]
+        self.options = ["Bot Difficulty", "Play As", "Handicap", "Time", "Board Size"]
         self.options_start_y = 300
         self.options_height = 60
         self.options_spacing = 20
