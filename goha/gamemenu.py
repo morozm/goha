@@ -125,6 +125,11 @@ class Gamemenu:
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
+                if self.button_pass_rect.collidepoint(event.pos):
+                    self.game.change_turn()
+                    if (self.game.opponent_difficulty != 4): # if not playing solo
+                            self.game.opponent_moves()
+                            self.game.process_move()
                 if (self.get_row_col_from_mouse(pos) != False and self.game.gamestate == 'active'):
                     row, col = self.get_row_col_from_mouse(pos)
                     if self.game.place(row, col):
