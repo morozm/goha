@@ -17,15 +17,13 @@ class Game:
         self.board = Board(self.board_size)
         self.opponent = Opponent(self.opponent_difficulty)
         self.turn = BLACK
+        self.score = [None, 0, 0]
         self.gamestate = 'active'
         self.board.find_legal_moves(self.turn)
         self.check_if_legal_moves_exist()
         self.place_whole_handicap()
+        self.initialize_score()
         self.opponent_makes_first_move()
-    
-    def update(self):
-        self.board.draw(self.win)
-        pygame.display.update()
 
     def reset(self):
         self._init()
@@ -50,7 +48,8 @@ class Game:
             return False
     
     def process_move(self):
-        self.board.captures(3 - self.turn)
+        captured = self.board.captures(3 - self.turn)
+        self.score[self.turn] += captured
         self.change_turn()
         self.board.find_legal_moves(self.turn)
         self.check_if_legal_moves_exist()
@@ -60,7 +59,7 @@ class Game:
             self.opponent.gen_move(self.turn, self.board)
 
     def opponent_makes_first_move(self):
-        if self.gamestate == 'active' and self.player_color == 2:
+        if self.gamestate == 'active' and self.player_color == 2 and self.turn == 1:
             self.opponent_moves()
             self.process_move()
 
@@ -117,7 +116,25 @@ class Game:
             self.place_handicap_stone(9,  15)
             self.place_handicap_stone(3,  9 )
             self.place_handicap_stone(15, 9 )
+        if self.handicap > 1:
+            self.change_turn()
+            if (self.player_color != self.turn):
+                self.opponent_moves()
+                self.process_move()
+        elif self.handicap == 1:
+            if (self.player_color != self.turn):
+                self.opponent_moves()
+                self.process_move()
+
     def place_handicap_stone(self, row, col):
         if self.handicap_copy > 0:
-            self.place(row, col)
+            if self.handicap != 1:
+                self.place(row, col)
             self.handicap_copy -= 1
+
+    def initialize_score(self):
+        self.score[BLACK] = 0.0
+        if (self.handicap == 0):
+            self.score[WHITE] = 6.5
+        else: 
+            self.score[WHITE] = 0.5

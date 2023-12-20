@@ -70,6 +70,30 @@ board_19x19 = [
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
 ]
 
+board_19x19 = [
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+    7, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+    7, 0, 0, 0, 0, 2, 0, 2, 2, 0, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0, 7,
+    7, 0, 0, 0, 0, 2, 0, 0, 2, 0, 2, 2, 1, 2, 2, 2, 2, 2, 0, 0, 7,
+    7, 0, 0, 0, 2, 0, 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 1, 2, 0, 0, 7,
+    7, 0, 0, 0, 0, 2, 0, 2, 1, 1, 2, 2, 2, 1, 1, 1, 0, 1, 1, 0, 7,
+    7, 0, 0, 0, 0, 0, 2, 2, 2, 1, 1, 2, 2, 1, 1, 1, 0, 1, 0, 0, 7,
+    7, 0, 0, 0, 0, 0, 0, 2, 2, 1, 1, 1, 1, 0, 1, 0, 1, 2, 2, 0, 7,
+    7, 0, 0, 0, 0, 0, 0, 2, 0, 2, 1, 0, 2, 1, 1, 1, 1, 0, 0, 0, 7,
+    7, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 1, 1, 1, 1, 0, 1, 0, 0, 0, 7,
+    7, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 2, 0, 1, 0, 0, 0, 7,
+    7, 0, 0, 0, 0, 2, 1, 0, 0, 0, 1, 1, 2, 1, 1, 1, 2, 0, 0, 0, 7,
+    7, 0, 0, 0, 1, 2, 2, 1, 1, 1, 2, 2, 2, 1, 0, 0, 2, 0, 0, 0, 7,
+    7, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 7,
+    7, 0, 0, 0, 1, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+    7, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+    7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+    7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+    7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+    7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
+]
+
 BOARDS = {
     0: [board_9x9, 9, 9],
     1: [board_13x13, 13, 13],
@@ -90,6 +114,10 @@ WIDTH, HEIGHT = 1600, 900
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 FPS = 60
 
+# piece to draw
+PADDING = 15    #percents
+OUTLINE = 2     #pixels
+
 # colors
 WHITECOLOR = (255, 255, 255)
 BLACKCOLOR = (0, 0, 0)
@@ -102,8 +130,8 @@ BLUECOLOR = (0, 0, 255)
 BROWNCOLOR = (205,133,63)
 
 #theme2
-T2_ORANGECOLOR = (255,165,0)
-T2_BROWNCOLOR1 = (192, 148, 134)
+T2_ORANGECOLOR1 = (255,165,0)
+T2_ORANGECOLOR2 = (255, 238, 204)
 T2_BROWNCOLOR2 =(150, 92, 74)
 T2_BROWNCOLOR3 = (74, 56, 50)
 
@@ -131,9 +159,9 @@ LANGUAGES_LIST = [
 ]
 
 THEMES = {
-    'Theme1': {'backgroundcolor': WHITECOLOR,       'maincolor1': BLACKCOLOR,       'maincolor2': LIGHTGREYCOLOR,   'cancelcolor': REDCOLOR2,   'boardcolor': BROWNCOLOR},
-    'Theme2': {'backgroundcolor': T2_BROWNCOLOR3,   'maincolor1': T2_ORANGECOLOR,   'maincolor2': T2_BROWNCOLOR1,   'cancelcolor': REDCOLOR2,   'boardcolor': BROWNCOLOR},
-    'Theme3': {'backgroundcolor': T3_GREEN1,        'maincolor1': T3_GREEN2,        'maincolor2': T3_GREEN3,        'cancelcolor': T3_GREEN4,   'boardcolor': BROWNCOLOR}
+    'Theme1': {'backgroundcolor': WHITECOLOR,       'maincolor1': BLACKCOLOR,       'maincolor2': LIGHTGREYCOLOR,   'cancelcolor': REDCOLOR2,   'iconbackgroundcolor': BROWNCOLOR},
+    'Theme2': {'backgroundcolor': T2_ORANGECOLOR2,  'maincolor1': T2_ORANGECOLOR1,  'maincolor2': T2_BROWNCOLOR3,   'cancelcolor': REDCOLOR2,   'iconbordercolor': BROWNCOLOR},
+    'Theme3': {'backgroundcolor': T3_GREEN1,        'maincolor1': T3_GREEN2,        'maincolor2': T3_GREEN3,        'cancelcolor': T3_GREEN4,   'iconbordercolor': BROWNCOLOR}
 }
 
 LANGUAGES = {

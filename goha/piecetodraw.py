@@ -1,10 +1,7 @@
 import pygame
-from .constants import GREYCOLOR
+from .constants import GREYCOLOR, PADDING, OUTLINE
 
 class PieceToDraw:
-    PADDING = 15    #percents
-    OUTLINE = 2     #pixels
-    
     def __init__(self, square, color, rows, cols, square_size, board_height_offset, board_width_offset):
         self.square = square
         self.row = 0
@@ -29,8 +26,8 @@ class PieceToDraw:
         self.col = self.square - (self.row+1)*(self.cols+2) - 1
 
     def draw(self, offset, win):
-        radius = round((100 - self.PADDING)/100 * self.square_size / 2)
-        pygame.draw.circle(win, GREYCOLOR, (self.x + offset[0], self.y + offset[1]), (radius + self.OUTLINE))
+        radius = round((100 - PADDING)/100 * self.square_size / 2)
+        pygame.draw.circle(win, GREYCOLOR, (self.x + offset[0], self.y + offset[1]), (radius + OUTLINE))
         pygame.draw.circle(win, self.color, (self.x + offset[0], self.y + offset[1]), radius)
 
     def __repr__(self):

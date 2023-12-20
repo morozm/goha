@@ -162,6 +162,7 @@ class Board:
                 self.board[square] &= 3
 
     def captures(self, color):
+        captured = 0
         for square in range(len(self.board)):
             piece = self.board[square]
             if piece == OFFBOARD:
@@ -170,8 +171,10 @@ class Board:
                 self.count(square, color)
                 if len(self.liberties) == 0:
                     self.clear_block()
+                    captured += len(self.block)
                     pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/stonescaptured.wav'))
                 self.restore_board()
+        return captured
 
     def find_legal_moves(self, color):
         self.legal_moves = []
@@ -230,9 +233,12 @@ class Board:
     def evaluate_1(self, color): # find a liberty with best count > 1 AND not on the edge
         best_count = 1
         best_liberty = False
-        for liberty in self.liberties:
+        current_liberties = self.liberties.copy()
+        for liberty in current_liberties:
+            self.restore_board()
             self.board[liberty] = color
             self.count(liberty, color)
+            self.print_board() # test
             if len(self.liberties) > best_count and not self.detect_edge(liberty) and liberty in self.legal_moves:
                 best_liberty = liberty
                 best_count = len(self.liberties)     
