@@ -18,12 +18,12 @@ class Game:
         self.opponent = Opponent(self.opponent_difficulty)
         self.turn = BLACK
         self.score = [None, 0, 0]
+        self.last_move = None
         self.gamestate = 'active'
         self.board.find_legal_moves(self.turn)
         self.check_if_legal_moves_exist()
         self.place_whole_handicap()
         self.initialize_score()
-        self.opponent_makes_first_move()
 
     def reset(self):
         self._init()
@@ -36,6 +36,7 @@ class Game:
         if piece == 0:
             if self.board.calc_square(row, col) in self.board.legal_moves:
                 self.board.place(row, col, self.turn)
+                self.last_move = self.board.calc_square(row, col)
                 pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/stoneplaced.wav'))
                 return True
             else:
@@ -56,12 +57,14 @@ class Game:
 
     def opponent_moves(self):
         if self.gamestate == 'active':
-            self.opponent.gen_move(self.turn, self.board)
+            move = self.opponent.gen_move(self.turn, self.board)
+            if move != None:
+                self.last_move = move
 
-    def opponent_makes_first_move(self):
-        if self.gamestate == 'active' and self.player_color == 2 and self.turn == 1:
-            self.opponent_moves()
-            self.process_move()
+    # def opponent_makes_first_move(self): # unused
+    #     if self.gamestate == 'active' and self.player_color == 2 and self.turn == 1:
+    #         self.opponent_moves()
+    #         self.process_move()
 
     # def draw_valid_moves(self, moves): #unused
     #     for move in moves:

@@ -118,6 +118,24 @@ class Board:
                     piece.draw(self.offsets[square], win)
                 else:
                     piece.draw([0, 0], win)
+
+    def draw_last_move(self, win, square):
+        if square != None:
+            piece = self.board[square]
+            if piece == 1 or piece == 2:
+                piece = PieceToDraw(square, STONECOLORS[3 - piece], self.rows, self.cols, self.square_size, self.board_height_offset, self.board_width_offset)
+                if (self.stone_centering == 0):
+                    piece.draw_last_move(self.offsets[square], win)
+                else:
+                    piece.draw_last_move([0, 0], win)
+    
+    def draw_hover_piece(self, win, square, color):
+        if self.board[square] == 0:
+            piece = PieceToDraw(square, STONECOLORS[color], self.rows, self.cols, self.square_size, self.board_height_offset, self.board_width_offset)
+            if (self.stone_centering == 0):
+                piece.draw_hover_piece(self.offsets[square], win)
+            else:
+                piece.draw_hover_piece([0, 0], win)
                     
     def remove(self, pieces): # unused
         for piece in pieces:
@@ -238,7 +256,7 @@ class Board:
             self.restore_board()
             self.board[liberty] = color
             self.count(liberty, color)
-            self.print_board() # test
+            # self.print_board() # test
             if len(self.liberties) > best_count and not self.detect_edge(liberty) and liberty in self.legal_moves:
                 best_liberty = liberty
                 best_count = len(self.liberties)     

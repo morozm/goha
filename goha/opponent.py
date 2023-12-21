@@ -1,4 +1,5 @@
 import random
+import pygame
 from .constants import EMPTY
 
 class Opponent:
@@ -11,21 +12,23 @@ class Opponent:
 
     def make_move(self, color, board, square):
         board.place2(square, color)
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/stoneplaced.wav'))
 
     def gen_random_move(self, color, board):
         if len(board.legal_moves) != 0: # just in case but should never happen
             random_square = board.legal_moves[random.randrange(len(board.legal_moves))]
+            self.make_move(color, board, random_square)
             return random_square
 
     def gen_move(self, color, board):
 
         # easy difficulty
         if (self.difficulty == 0):
-            self.gen_move_bot0(color, board)
+            return self.gen_move_bot0(color, board)
 
         # normal difficulty
         elif (self.difficulty == 1):
-            self.gen_move_bot1(color, board)
+            return self.gen_move_bot1(color, board)
 
         # hard difficulty
         elif (self.difficulty == 2):
@@ -34,8 +37,7 @@ class Opponent:
 
         # random move
         elif (self.difficulty == 3):
-            random_move = self.gen_random_move(color, board)
-            self.make_move(color, board, random_move)
+            return self.gen_random_move(color, board)
 
         # solo
         elif (self.difficulty == 4):
@@ -129,6 +131,7 @@ class Opponent:
             best_move = self.gen_random_move(color, board)
 
         self.make_move(color, board, best_move)
+        return best_move
 
     def gen_move_bot1(self, color, board):
         ################################################################################################################
@@ -223,3 +226,4 @@ class Opponent:
             best_move = self.gen_random_move(color, board)
 
         self.make_move(color, board, best_move)
+        return best_move

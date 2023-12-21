@@ -30,5 +30,17 @@ class PieceToDraw:
         pygame.draw.circle(win, GREYCOLOR, (self.x + offset[0], self.y + offset[1]), (radius + OUTLINE))
         pygame.draw.circle(win, self.color, (self.x + offset[0], self.y + offset[1]), radius)
 
+    def draw_last_move(self, offset, win):
+        radius = round((100 - PADDING)/100 * self.square_size / 4)
+        pygame.draw.circle(win, GREYCOLOR, (self.x + offset[0], self.y + offset[1]), (radius + OUTLINE))
+        pygame.draw.circle(win, self.color, (self.x + offset[0], self.y + offset[1]), radius)
+
+    def draw_hover_piece(self, offset, win):
+        radius = round((100 - PADDING)/100 * self.square_size / 2)
+        transparent_color = self.color + (128,)
+        surface = pygame.Surface((2 * radius, 2 * radius), pygame.SRCALPHA)
+        pygame.draw.circle(surface, transparent_color, (radius, radius), radius)
+        win.blit(surface, (self.x + offset[0] - radius, self.y + offset[1] - radius))
+
     def __repr__(self):
         return str(self.color)

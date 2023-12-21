@@ -10,6 +10,7 @@ class Gamemenu:
         self.settings = Settings()
         self.load_settings()
         self.running = False
+        self.move_time = pygame.time.get_ticks()
         self._init()
 
     def _init(self):
@@ -61,6 +62,7 @@ class Gamemenu:
             print(self.game.winner())
             self.running = False
         self.game.board.draw(self.win)
+        self.game.board.draw_last_move(self.win, self.game.last_move)
         self.draw_icon(self.win, self.usericon, (WIDTH - self.game.board.square_size*self.game.board.cols) // 4, HEIGHT * 3 // 4, 64, 64)
         self.draw_icon(self.win, self.boticon,  (WIDTH - self.game.board.square_size*self.game.board.cols) // 4, HEIGHT * 1 // 4, 64, 64)
         self.draw_name(self.win, self.username_input_text,                                      (WIDTH - self.game.board.square_size*self.game.board.cols) // 4, HEIGHT * 3 // 4 + 50)
@@ -74,6 +76,15 @@ class Gamemenu:
         self.is_resign_hovered = self.button_resign_rect.collidepoint(mouse_x, mouse_y)
         self.draw_button(self.win, self.passicon,   (WIDTH - self.game.board.square_size*self.game.board.cols) // 4 - self.button_width // 2 - 20, HEIGHT * 3 // 4 + 150, self.button_width, self.button_height, self.is_pass_hovered)
         self.draw_button(self.win, self.resignicon, (WIDTH - self.game.board.square_size*self.game.board.cols) // 4 + self.button_width // 2 + 20, HEIGHT * 3 // 4 + 150, self.button_width, self.button_height, self.is_resign_hovered)
+        if (self.get_row_col_from_mouse((mouse_x, mouse_y)) != False and self.game.gamestate == 'active'):
+            if (self.game.turn == self.game.player_color) or self.game.opponent_difficulty == 4:
+                row, col = self.get_row_col_from_mouse((mouse_x, mouse_y))
+                square = self.game.board.calc_square(row, col)
+                if square in self.game.board.legal_moves:
+                    self.draw_hover_piece(self.win, square)
+
+    def draw_hover_piece(self, screen, square):
+        self.game.board.draw_hover_piece(screen, square, self.game.turn)
 
     def draw_icon(self, screen, icon, x, y, width, height):
         icon_rect = pygame.Rect(0, 0, width, height)
@@ -124,21 +135,22 @@ class Gamemenu:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                if (self.button_pass_rect.collidepoint(event.pos) and self.game.gamestate == 'active' and (self.game.turn == self.game.player_color or self.game.opponent_difficulty == 4)):
+                    self.move_time = pygame.time.get_ticks()
+                    self.game.process_move()
                 pos = pygame.mouse.get_pos()
-                if self.button_pass_rect.collidepoint(event.pos):
-                    self.game.change_turn()
-                    if (self.game.opponent_difficulty != 4): # if not playing solo
-                            self.game.opponent_moves()
-                            self.game.process_move()
-                if (self.get_row_col_from_mouse(pos) != False and self.game.gamestate == 'active'):
+                if (self.get_row_col_from_mouse(pos) != False and self.game.gamestate == 'active' and (self.game.turn == self.game.player_color or self.game.opponent_difficulty == 4)):
                     row, col = self.get_row_col_from_mouse(pos)
                     if self.game.place(row, col):
+                        self.move_time = pygame.time.get_ticks()
                         self.game.process_move()
-                        self.game.board.print_board()    
-                        if (self.game.opponent_difficulty != 4): # if not playing solo
-                            self.game.opponent_moves()
-                            self.game.process_move()
-                        self.game.board.print_board()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.running = False     
+                    self.running = False
+
+        if self.game.player_color == self.game.turn:
+            self.move_time = pygame.time.get_ticks()
+        if pygame.time.get_ticks() - self.move_time >= 500:
+            if (self.game.opponent_difficulty != 4): # if not playing solo
+                    self.game.opponent_moves()
+                    self.game.process_move()
