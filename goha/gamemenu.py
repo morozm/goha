@@ -138,6 +138,9 @@ class Gamemenu:
                 if (self.button_pass_rect.collidepoint(event.pos) and self.game.gamestate == 'active' and (self.game.turn == self.game.player_color or self.game.opponent_difficulty == 4)):
                     self.move_time = pygame.time.get_ticks()
                     self.game.process_move()
+                if (self.button_resign_rect.collidepoint(event.pos) and self.game.gamestate == 'active' and (self.game.turn == self.game.player_color or self.game.opponent_difficulty == 4)):
+                    print('Player resigned')
+                    self.game.end_game()
                 pos = pygame.mouse.get_pos()
                 if (self.get_row_col_from_mouse(pos) != False and self.game.gamestate == 'active' and (self.game.turn == self.game.player_color or self.game.opponent_difficulty == 4)):
                     row, col = self.get_row_col_from_mouse(pos)
@@ -151,6 +154,6 @@ class Gamemenu:
         if self.game.player_color == self.game.turn:
             self.move_time = pygame.time.get_ticks()
         if pygame.time.get_ticks() - self.move_time >= 500:
-            if (self.game.opponent_difficulty != 4): # if not playing solo
-                    self.game.opponent_moves()
-                    self.game.process_move()
+            if (self.game.opponent_difficulty != 4 and self.game.gamestate == 'active'): # if not playing solo
+                self.game.opponent_moves()
+                self.game.process_move()

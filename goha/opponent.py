@@ -32,7 +32,7 @@ class Opponent:
 
         # hard difficulty
         elif (self.difficulty == 2):
-            pass
+            return None
             # to implement
 
         # random move

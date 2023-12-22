@@ -59,7 +59,22 @@ class Game:
         self.board.find_legal_moves(self.turn)
         self.board.acknowledge_super_ko(self.board_history, self.turn)
         self.check_if_legal_moves_exist()
+        if self.turn_number > 2:
+            if (self.board_history[-1] == self.board_history[-3]):
+                print('Both players passed!')
+                self.end_game()
         # self.board.print_board()
+
+    def end_game(self):
+        self.gamestate = 'inactive'
+        self.board.count_territory()
+        self.score[BLACK] += len(self.board.territory[BLACK])
+        self.score[WHITE] += len(self.board.territory[WHITE])
+        if self.score[1] < self.score[2] and self.opponent_difficulty != 4:
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamelost.wav'))
+        else:
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamewon.wav'))
+        print('Game ends. ' + str(self.score[BLACK]) + ' - ' + str(self.score[WHITE]))
 
     def opponent_moves(self):
         if self.gamestate == 'active':
@@ -85,8 +100,8 @@ class Game:
     
     def check_if_legal_moves_exist(self):
         if len(self.board.legal_moves) == 0:
-            print('No more legal moves! Game ends.')
-            self.gamestate = 'inactive'
+            print('No more legal moves!')
+            self.end_game()
             return False
         else:
             return True

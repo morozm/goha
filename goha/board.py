@@ -1,5 +1,5 @@
 import pygame, random
-from .constants import OFFBOARD, MARKER, EMPTY, LIBERTY, BOARDS, STONECOLORS, BLACKCOLOR, BROWNCOLOR, WIDTH, HEIGHT
+from .constants import OFFBOARD, MARKER, EMPTY, LIBERTY, BOARDS, STONECOLORS, BLACKCOLOR, BROWNCOLOR, WIDTH, HEIGHT, BLACK, WHITE
 from .piecetodraw import PieceToDraw
 from .settings import Settings
 BOARD_MENU_SPACE = 50
@@ -13,6 +13,7 @@ class Board:
         self.liberties = []
         self.legal_moves = []
         self.offsets = []
+        self.territory = [[], [], [], []]
         self.board_size = board_size
         self.settings = Settings()
         self.texture = pygame.image.load("goha/textures/texture2.jpg")
@@ -153,12 +154,45 @@ class Board:
             self.block.append(square)
             self.board[square] |= MARKER
             self.count(square - (self.cols+2), color)   # walk north
-            self.count(square - 1, color)               # walk east
+            self.count(square - 1, color)               # walk west
             self.count(square + (self.cols+2), color)   # walk south
-            self.count(square + 1, color)               # walk west
+            self.count(square + 1, color)               # walk east
         elif piece == EMPTY:
             self.board[square] |= LIBERTY
             self.liberties.append(square)
+
+    def count_territory(self):
+        for square in range(len(self.board)):
+            notwhite = notblack = False
+            self.count_territory2(square)
+            for i in self.territory[3]:
+                if self.board[i] == BLACK:
+                    notwhite = True
+                elif self.board[i] == WHITE:
+                    notblack = True
+            if (notwhite and notblack): # noones terriotry
+                pass    
+            elif (notwhite): # blacks terriotry
+                self.territory[BLACK] += (self.territory[0])
+            elif (notblack): # whites territory
+                self.territory[WHITE] += (self.territory[0])
+            self.territory[0] = []
+            self.territory[3] = []
+        self.restore_board()
+
+    def count_territory2(self, square):
+        piece = self.board[square]
+        if piece == EMPTY:
+            self.territory[0].append(square)
+            self.board[square] |= MARKER
+            self.count_territory2(square - (self.cols+2))   # walk north
+            self.count_territory2(square - 1)               # walk west
+            self.count_territory2(square + (self.cols+2))   # walk south
+            self.count_territory2(square + 1)               # walk east
+        elif piece == BLACK or piece == WHITE:
+            self.territory[3].append(square)
+        else:
+            return
 
     def clear_block(self):
         for captured in self.block:
