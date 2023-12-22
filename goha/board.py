@@ -15,6 +15,7 @@ class Board:
         self.offsets = []
         self.territory = [[], [], [], []]
         self.board_size = board_size
+        self.territory_drawn = False
         self.settings = Settings()
         self.texture = pygame.image.load("goha/textures/texture2.jpg")
         self.load_settings()
@@ -120,6 +121,28 @@ class Board:
                 else:
                     piece.draw([0, 0], win)
 
+    def draw_territory(self, win):
+        if self.territory_drawn == True:
+            for square in range (len(self.board)):
+                if square in self.territory[BLACK]:
+                    piece = PieceToDraw(square, STONECOLORS[BLACK], self.rows, self.cols, self.square_size, self.board_height_offset, self.board_width_offset)
+                    if (self.stone_centering == 0):
+                        piece.draw_territory(self.offsets[square], win)
+                    else:
+                        piece.draw_territory([0, 0], win)
+                elif square in self.territory[WHITE]:
+                    piece = PieceToDraw(square, STONECOLORS[WHITE], self.rows, self.cols, self.square_size, self.board_height_offset, self.board_width_offset)
+                    if (self.stone_centering == 0):
+                        piece.draw_territory(self.offsets[square], win)
+                    else:
+                        piece.draw_territory([0, 0], win)
+                elif self.board[square] != 7 and self.board[square] != BLACK and self.board[square] != WHITE:
+                    piece = PieceToDraw(square, (128, 128, 128), self.rows, self.cols, self.square_size, self.board_height_offset, self.board_width_offset)
+                    if (self.stone_centering == 0):
+                        piece.draw_territory(self.offsets[square], win)
+                    else:
+                        piece.draw_territory([0, 0], win)
+
     def draw_last_move(self, win, square):
         if square != None:
             piece = self.board[square]
@@ -162,6 +185,7 @@ class Board:
             self.liberties.append(square)
 
     def count_territory(self):
+        self.territory[BLACK] = self.territory[WHITE] = []
         for square in range(len(self.board)):
             notwhite = notblack = False
             self.count_territory2(square)

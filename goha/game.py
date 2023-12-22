@@ -58,6 +58,7 @@ class Game:
         self.board_history.append(self.board.board.copy())
         self.board.find_legal_moves(self.turn)
         self.board.acknowledge_super_ko(self.board_history, self.turn)
+        self.board.count_territory()
         self.check_if_legal_moves_exist()
         if self.turn_number > 2:
             if (self.board_history[-1] == self.board_history[-3]):
@@ -67,7 +68,6 @@ class Game:
 
     def end_game(self):
         self.gamestate = 'inactive'
-        self.board.count_territory()
         self.score[BLACK] += len(self.board.territory[BLACK])
         self.score[WHITE] += len(self.board.territory[WHITE])
         if self.score[1] < self.score[2] and self.opponent_difficulty != 4:

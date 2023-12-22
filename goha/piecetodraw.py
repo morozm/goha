@@ -41,6 +41,15 @@ class PieceToDraw:
         surface = pygame.Surface((2 * radius, 2 * radius), pygame.SRCALPHA)
         pygame.draw.circle(surface, transparent_color, (radius, radius), radius)
         win.blit(surface, (self.x + offset[0] - radius, self.y + offset[1] - radius))
+    
+    def draw_territory(self, offset, win):
+        length = round((100 - PADDING)/100 * self.square_size / 3)
+        territory_rect1 = pygame.Rect(0, 0, length + OUTLINE, length + OUTLINE)
+        territory_rect1.center = (self.x + offset[0], self.y + offset[1])
+        territory_rect2 = pygame.Rect(0, 0, length, length)
+        territory_rect2.center = (self.x + offset[0], self.y + offset[1])
+        pygame.draw.rect(win, GREYCOLOR, territory_rect1)
+        pygame.draw.rect(win, self.color, territory_rect2)
 
     def __repr__(self):
         return str(self.color)

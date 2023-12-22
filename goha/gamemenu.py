@@ -27,13 +27,16 @@ class Gamemenu:
         self.boticon = pygame.image.load("goha/assets/boticon64.png")
         self.passicon = pygame.image.load("goha/assets/hand-shake32.png")
         self.resignicon = pygame.image.load("goha/assets/white-flag32.png")
+        self.toolsicon = pygame.image.load("goha/assets/settings32.png")
 
         self.button_width = 70
         self.button_height = 40
-        self.button_pass_rect =     pygame.Rect((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 - self.button_width // 2 - 20, HEIGHT * 3 // 4 + 150, self.button_width, self.button_height)
-        self.button_resign_rect =   pygame.Rect((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 + self.button_width // 2 + 20, HEIGHT * 3 // 4 + 150, self.button_width, self.button_height)
-        self.button_pass_rect.center = ((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 - self.button_width // 2 - 20, HEIGHT * 3 // 4 + 150)
-        self.button_resign_rect.center = ((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 + self.button_width // 2 + 20, HEIGHT * 3 // 4 + 150)
+        self.button_pass_rect =     pygame.Rect((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 - self.button_width // 2 - 20,  HEIGHT * 3 // 4 + 150, self.button_width, self.button_height)
+        self.button_resign_rect =   pygame.Rect((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 + self.button_width // 2 + 20,  HEIGHT * 3 // 4 + 150, self.button_width, self.button_height)
+        self.button_tools_rect =    pygame.Rect((WIDTH * 3 + self.game.board.square_size*self.game.board.cols) // 4,                            HEIGHT * 3 // 4 + 150, self.button_width, self.button_height)
+        self.button_pass_rect.center =      ((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 - self.button_width // 2 - 20,     HEIGHT * 3 // 4 + 150)
+        self.button_resign_rect.center =    ((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 + self.button_width // 2 + 20,     HEIGHT * 3 // 4 + 150)
+        self.button_tools_rect.center =     ((WIDTH * 3 + self.game.board.square_size*self.game.board.cols) // 4,                               HEIGHT * 3 // 4 + 150)
 
     def adjust_game_settings(self, difficulty, player_color, handicap, time, board_size):
         self.game.turn = player_color - 1
@@ -63,6 +66,7 @@ class Gamemenu:
             self.running = False
         self.game.board.draw(self.win)
         self.game.board.draw_last_move(self.win, self.game.last_move)
+        self.game.board.draw_territory(self.win)
         self.draw_icon(self.win, self.usericon, (WIDTH - self.game.board.square_size*self.game.board.cols) // 4, HEIGHT * 3 // 4, 64, 64)
         self.draw_icon(self.win, self.boticon,  (WIDTH - self.game.board.square_size*self.game.board.cols) // 4, HEIGHT * 1 // 4, 64, 64)
         self.draw_name(self.win, self.username_input_text,                                      (WIDTH - self.game.board.square_size*self.game.board.cols) // 4, HEIGHT * 3 // 4 + 50)
@@ -74,8 +78,10 @@ class Gamemenu:
         mouse_x, mouse_y = pygame.mouse.get_pos()
         self.is_pass_hovered = self.button_pass_rect.collidepoint(mouse_x, mouse_y)
         self.is_resign_hovered = self.button_resign_rect.collidepoint(mouse_x, mouse_y)
-        self.draw_button(self.win, self.passicon,   (WIDTH - self.game.board.square_size*self.game.board.cols) // 4 - self.button_width // 2 - 20, HEIGHT * 3 // 4 + 150, self.button_width, self.button_height, self.is_pass_hovered)
-        self.draw_button(self.win, self.resignicon, (WIDTH - self.game.board.square_size*self.game.board.cols) // 4 + self.button_width // 2 + 20, HEIGHT * 3 // 4 + 150, self.button_width, self.button_height, self.is_resign_hovered)
+        self.is_tools_hovered = self.button_tools_rect.collidepoint(mouse_x, mouse_y)
+        self.draw_button(self.win, self.passicon,   (WIDTH - self.game.board.square_size*self.game.board.cols) // 4 - self.button_width // 2 - 20,      HEIGHT * 3 // 4 + 150, self.button_width, self.button_height, self.is_pass_hovered)
+        self.draw_button(self.win, self.resignicon, (WIDTH - self.game.board.square_size*self.game.board.cols) // 4 + self.button_width // 2 + 20,      HEIGHT * 3 // 4 + 150, self.button_width, self.button_height, self.is_resign_hovered)
+        self.draw_button(self.win, self.toolsicon,  (WIDTH * 3 + self.game.board.square_size*self.game.board.cols) // 4,                                HEIGHT * 3 // 4 + 150, self.button_width, self.button_height, self.is_tools_hovered)
         if (self.get_row_col_from_mouse((mouse_x, mouse_y)) != False and self.game.gamestate == 'active'):
             if (self.game.turn == self.game.player_color) or self.game.opponent_difficulty == 4:
                 row, col = self.get_row_col_from_mouse((mouse_x, mouse_y))
@@ -141,6 +147,8 @@ class Gamemenu:
                 if (self.button_resign_rect.collidepoint(event.pos) and self.game.gamestate == 'active' and (self.game.turn == self.game.player_color or self.game.opponent_difficulty == 4)):
                     print('Player resigned')
                     self.game.end_game()
+                if (self.button_tools_rect.collidepoint(event.pos) and self.game.gamestate == 'active' and (self.game.turn == self.game.player_color or self.game.opponent_difficulty == 4)):
+                    self.game.board.territory_drawn = not self.game.board.territory_drawn
                 pos = pygame.mouse.get_pos()
                 if (self.get_row_col_from_mouse(pos) != False and self.game.gamestate == 'active' and (self.game.turn == self.game.player_color or self.game.opponent_difficulty == 4)):
                     row, col = self.get_row_col_from_mouse(pos)
