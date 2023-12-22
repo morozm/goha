@@ -203,7 +203,6 @@ class Board:
                 continue
             else:
                 self.place2(square, color)
-                
                 neighbours = [square - (self.cols+2), square - 1, square + (self.cols+2), square + 1] # captures but only for neighbours
                 for square2 in neighbours:
                     piece = self.board[square2]
@@ -214,12 +213,32 @@ class Board:
                         if len(self.liberties) == 0:
                             self.clear_block()
                         self.restore_board()
-
                 self.count(square, color)
                 if len(self.liberties) != 0:
                     self.legal_moves.append(square)
                 self.clear_groups()
                 self.board = self.board_copy.copy()
+
+    def acknowledge_super_ko(self, board_history, color):
+        self.board_copy = self.board.copy()
+        for square in self.legal_moves:
+            piece = self.board[square]
+            self.place2(square, color)
+            neighbours = [square - (self.cols+2), square - 1, square + (self.cols+2), square + 1] # captures but only for neighbours
+            for square2 in neighbours:
+                piece = self.board[square2]
+                if piece == OFFBOARD:
+                    continue
+                if piece & (3- color):
+                    self.count(square2, (3 - color))
+                    if len(self.liberties) == 0:
+                        self.clear_block()
+                    self.restore_board()
+            positions = [i for i in range(len(board_history)) if i % 2 == 2-color]
+            for i in positions:
+                if self.board == board_history[i]:
+                    self.legal_moves.remove(square)
+            self.board = self.board_copy.copy()
 
     def detect_edge(self, square):
         neighbours = [square - (self.cols+2), square - 1, square + (self.cols+2), square + 1]

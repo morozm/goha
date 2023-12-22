@@ -17,6 +17,8 @@ class Game:
         self.board = Board(self.board_size)
         self.opponent = Opponent(self.opponent_difficulty)
         self.turn = BLACK
+        self.turn_number = 1
+        self.board_history = [self.board.board.copy()]
         self.score = [None, 0, 0]
         self.last_move = None
         self.gamestate = 'active'
@@ -52,8 +54,12 @@ class Game:
         captured = self.board.captures(3 - self.turn)
         self.score[self.turn] += captured
         self.change_turn()
+        self.turn_number += 1
+        self.board_history.append(self.board.board.copy())
         self.board.find_legal_moves(self.turn)
+        self.board.acknowledge_super_ko(self.board_history, self.turn)
         self.check_if_legal_moves_exist()
+        # self.board.print_board()
 
     def opponent_moves(self):
         if self.gamestate == 'active':
@@ -121,13 +127,6 @@ class Game:
             self.place_handicap_stone(15, 9 )
         if self.handicap > 1:
             self.change_turn()
-            if (self.player_color != self.turn):
-                self.opponent_moves()
-                self.process_move()
-        elif self.handicap == 1:
-            if (self.player_color != self.turn):
-                self.opponent_moves()
-                self.process_move()
 
     def place_handicap_stone(self, row, col):
         if self.handicap_copy > 0:
