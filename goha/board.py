@@ -185,7 +185,8 @@ class Board:
             self.liberties.append(square)
 
     def count_territory(self):
-        self.territory[BLACK] = self.territory[WHITE] = []
+        self.territory[BLACK] = []
+        self.territory[WHITE] = []
         for square in range(len(self.board)):
             notwhite = notblack = False
             self.count_territory2(square)
@@ -197,9 +198,9 @@ class Board:
             if (notwhite and notblack): # noones terriotry
                 pass    
             elif (notwhite): # blacks terriotry
-                self.territory[BLACK] += (self.territory[0])
+                self.territory[BLACK] += (self.territory[0].copy())
             elif (notblack): # whites territory
-                self.territory[WHITE] += (self.territory[0])
+                self.territory[WHITE] += (self.territory[0].copy())
             self.territory[0] = []
             self.territory[3] = []
         self.restore_board()
