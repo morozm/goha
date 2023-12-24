@@ -1,6 +1,8 @@
 import pygame
 from .board import Board
+from .clock import Clock
 from .opponent import Opponent
+from .settings import Settings
 from .constants import BLACK, WHITE, BLUECOLOR
 
 class Game:
@@ -11,11 +13,16 @@ class Game:
         self.handicap = handicap
         self.time = time
         self.board_size = board_size
+        self.info_text = ['', '']
+        self.settings = Settings()
+        self.load_settings()
         self._init()
 
     def _init(self):
         self.board = Board(self.board_size)
         self.opponent = Opponent(self.opponent_difficulty)
+        self.player_clock = Clock(self.time)
+        self.oponent_clock = Clock(self.time)
         self.turn = BLACK
         self.turn_number = 1
         self.board_history = [self.board.board.copy()]
@@ -26,6 +33,10 @@ class Game:
         self.check_if_legal_moves_exist()
         self.place_whole_handicap()
         self.initialize_score()
+
+    def load_settings(self):
+        self.settings.load_settings()
+        self.language = self.settings.get_language()
 
     def reset(self):
         self._init()
@@ -59,6 +70,14 @@ class Game:
         self.board.find_legal_moves(self.turn)
         self.board.acknowledge_super_ko(self.board_history, self.turn)
         self.board.count_territory()
+        if (self.turn == self.player_color):
+            self.oponent_clock.pause()
+            self.oponent_clock.add_time()
+            self.player_clock.resume()
+        else:
+            self.player_clock.pause()
+            self.player_clock.add_time()
+            self.oponent_clock.resume()
         self.check_if_legal_moves_exist()
         if self.turn_number > 2:
             if (self.board_history[-1] == self.board_history[-3]):
@@ -68,13 +87,50 @@ class Game:
 
     def end_game(self):
         self.gamestate = 'inactive'
+        self.board.territory_drawn = True
+        self.player_clock.pause()
+        self.oponent_clock.pause()
         self.score[BLACK] += len(self.board.territory[BLACK])
         self.score[WHITE] += len(self.board.territory[WHITE])
         if self.score[1] < self.score[2] and self.opponent_difficulty != 4:
             pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamelost.wav'))
         else:
             pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamewon.wav'))
-        print('Game ends. ' + str(self.score[BLACK]) + ' - ' + str(self.score[WHITE]))
+        self.info_text[0] = self.language['Game ends.']
+        self.info_text[1] = str(self.score[BLACK]) + ' - ' + str(self.score[WHITE])
+
+    def end_game_by_time(self):
+        self.gamestate = 'inactive'
+        self.board.territory_drawn = True
+        self.player_clock.pause()
+        self.oponent_clock.pause()
+        if self.player_clock.miliseconds == 0 and self.opponent_difficulty != 4:
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamelost.wav'))
+        else:
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamewon.wav'))
+        if self.player_clock.miliseconds == 0:
+            if self.player_color == BLACK:
+                self.info_text[0] = self.language['Game ends. White won.']
+                self.info_text[1] = self.language['(Black ran out of time.)']
+            elif self.player_color == WHITE:
+                self.info_text[0] = self.language['Game ends. Black won.']
+                self.info_text[1] = self.language['(White ran out of time.)']
+        elif self.oponent_clock.miliseconds == 0:
+            if self.player_color == BLACK:
+                self.info_text[0] = self.language['Game ends. Black won.']
+                self.info_text[1] = self.language['(White ran out of time.)']
+            elif self.player_color == WHITE:
+                self.info_text[0] = self.language['Game ends. White won.']
+                self.info_text[1] = self.language['(Black ran out of time.)']
+
+    def end_game_by_resignation(self):
+        self.gamestate = 'inactive'
+        self.board.territory_drawn = True
+        self.player_clock.pause()
+        self.oponent_clock.pause()
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamelost.wav'))
+        self.info_text[0] = self.language['Game ends.']
+        self.info_text[1] = self.language['Player resigned.']
 
     def opponent_moves(self):
         if self.gamestate == 'active':

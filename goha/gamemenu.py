@@ -22,21 +22,25 @@ class Gamemenu:
 
         self.name_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 20)
         self.score_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 30)
+        self.info_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 20)
 
         self.usericon = pygame.image.load("goha/assets/usericon64.png")
         self.boticon = pygame.image.load("goha/assets/boticon64.png")
         self.passicon = pygame.image.load("goha/assets/hand-shake32.png")
         self.resignicon = pygame.image.load("goha/assets/white-flag32.png")
         self.toolsicon = pygame.image.load("goha/assets/settings32.png")
+        self.menuicon = pygame.image.load("goha/assets/menu32.png")
 
         self.button_width = 70
         self.button_height = 40
-        self.button_pass_rect =     pygame.Rect((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 - self.button_width // 2 - 20,  HEIGHT * 3 // 4 + 150, self.button_width, self.button_height)
-        self.button_resign_rect =   pygame.Rect((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 + self.button_width // 2 + 20,  HEIGHT * 3 // 4 + 150, self.button_width, self.button_height)
-        self.button_tools_rect =    pygame.Rect((WIDTH * 3 + self.game.board.square_size*self.game.board.cols) // 4,                            HEIGHT * 3 // 4 + 150, self.button_width, self.button_height)
+        self.button_pass_rect =     pygame.Rect(0, 0, self.button_width, self.button_height)
+        self.button_resign_rect =   pygame.Rect(0, 0, self.button_width, self.button_height)
+        self.button_tools_rect =    pygame.Rect(0, 0, self.button_width, self.button_height)
+        self.button_menu_rect =     pygame.Rect(0, 0, self.button_width, self.button_width)
         self.button_pass_rect.center =      ((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 - self.button_width // 2 - 20,     HEIGHT * 3 // 4 + 150)
         self.button_resign_rect.center =    ((WIDTH - self.game.board.square_size*self.game.board.cols) // 4 + self.button_width // 2 + 20,     HEIGHT * 3 // 4 + 150)
         self.button_tools_rect.center =     ((WIDTH * 3 + self.game.board.square_size*self.game.board.cols) // 4,                               HEIGHT * 3 // 4 + 150)
+        self.button_menu_rect.center =      (WIDTH - self.button_width, self.button_width)
 
     def adjust_game_settings(self, difficulty, player_color, handicap, time, board_size):
         self.game.turn = player_color - 1
@@ -74,14 +78,19 @@ class Gamemenu:
         self.draw_score(self.win, 1, (WIDTH - self.game.board.square_size*self.game.board.cols) // 4, HEIGHT * 3 // 4 - 60)
         self.draw_score(self.win, 2, (WIDTH - self.game.board.square_size*self.game.board.cols) // 4, HEIGHT * 1 // 4 + 60)
         self.draw_current_player_move(self.win, (WIDTH - self.game.board.square_size*self.game.board.cols) // 4 + 100, HEIGHT * 1 // 4)
-        
+        self.game.player_clock.draw(self.win, (WIDTH - self.game.board.square_size*self.game.board.cols) // 4, HEIGHT * 3 // 4 - 140, 120, 60, self.theme['maincolor1'], self.theme['backgroundcolor'])
+        self.game.oponent_clock.draw(self.win, (WIDTH - self.game.board.square_size*self.game.board.cols) // 4, HEIGHT * 1 // 4 + 140, 120, 60, self.theme['maincolor1'], self.theme['backgroundcolor'])
+        self.draw_info_text(self.win, (WIDTH * 3 + self.game.board.square_size*self.game.board.cols) // 4, HEIGHT * 1 // 2, 340, 100, self.game.info_text[0], self.game.info_text[1], self.theme['maincolor1'], self.theme['backgroundcolor'])
+
         mouse_x, mouse_y = pygame.mouse.get_pos()
         self.is_pass_hovered = self.button_pass_rect.collidepoint(mouse_x, mouse_y)
         self.is_resign_hovered = self.button_resign_rect.collidepoint(mouse_x, mouse_y)
         self.is_tools_hovered = self.button_tools_rect.collidepoint(mouse_x, mouse_y)
+        self.is_menu_hovered = self.button_menu_rect.collidepoint(mouse_x, mouse_y)
         self.draw_button(self.win, self.passicon,   (WIDTH - self.game.board.square_size*self.game.board.cols) // 4 - self.button_width // 2 - 20,      HEIGHT * 3 // 4 + 150, self.button_width, self.button_height, self.is_pass_hovered)
         self.draw_button(self.win, self.resignicon, (WIDTH - self.game.board.square_size*self.game.board.cols) // 4 + self.button_width // 2 + 20,      HEIGHT * 3 // 4 + 150, self.button_width, self.button_height, self.is_resign_hovered)
         self.draw_button(self.win, self.toolsicon,  (WIDTH * 3 + self.game.board.square_size*self.game.board.cols) // 4,                                HEIGHT * 3 // 4 + 150, self.button_width, self.button_height, self.is_tools_hovered)
+        self.draw_button(self.win, self.menuicon,   WIDTH - self.button_width, self.button_width, self.button_width, self.button_width, self.is_menu_hovered)
         if (self.get_row_col_from_mouse((mouse_x, mouse_y)) != False and self.game.gamestate == 'active'):
             if (self.game.turn == self.game.player_color) or self.game.opponent_difficulty == 4:
                 row, col = self.get_row_col_from_mouse((mouse_x, mouse_y))
@@ -112,6 +121,19 @@ class Gamemenu:
         text_surface = self.score_font.render(str(self.game.score[player]), True, self.theme['maincolor1'])
         text_rect = text_surface.get_rect(center=(x, y))
         screen.blit(text_surface, text_rect)
+    
+    def draw_info_text(self, screen, x, y, width, height, text1, text2, color1, color2):
+        if (text1 != ''):
+            rect1 = pygame.Rect(0, 0, width+8, height+8)
+            rect2 = pygame.Rect(0, 0, width, height)
+            rect1.center = (x, y)
+            rect2.center = (x, y)
+            pygame.draw.rect(screen, color1, rect1, border_radius=0)
+            pygame.draw.rect(screen, color2, rect2, border_radius=0)
+            text1 = self.info_font.render(text1, True, color1)
+            text2 = self.info_font.render(text2, True, color1)
+            screen.blit(text1, (x - text1.get_width()//2, y - text1.get_height()))
+            screen.blit(text2, (x - text2.get_width()//2, y))
 
     def draw_button(self, screen, icon, x, y, width, height, is_hovered):
         backgroundcolor = self.theme['maincolor2'] if is_hovered else self.theme['backgroundcolor']
@@ -145,10 +167,11 @@ class Gamemenu:
                     self.move_time = pygame.time.get_ticks()
                     self.game.process_move()
                 if (self.button_resign_rect.collidepoint(event.pos) and self.game.gamestate == 'active' and (self.game.turn == self.game.player_color or self.game.opponent_difficulty == 4)):
-                    print('Player resigned')
-                    self.game.end_game()
-                if (self.button_tools_rect.collidepoint(event.pos) and self.game.gamestate == 'active' and (self.game.turn == self.game.player_color or self.game.opponent_difficulty == 4)):
+                    self.game.end_game_by_resignation()
+                if (self.button_tools_rect.collidepoint(event.pos)):
                     self.game.board.territory_drawn = not self.game.board.territory_drawn
+                if (self.button_menu_rect.collidepoint(event.pos)):
+                    self.running = False
                 pos = pygame.mouse.get_pos()
                 if (self.get_row_col_from_mouse(pos) != False and self.game.gamestate == 'active' and (self.game.turn == self.game.player_color or self.game.opponent_difficulty == 4)):
                     row, col = self.get_row_col_from_mouse(pos)
@@ -165,3 +188,7 @@ class Gamemenu:
             if (self.game.opponent_difficulty != 4 and self.game.gamestate == 'active'): # if not playing solo
                 self.game.opponent_moves()
                 self.game.process_move()
+        
+        if self.game.time != 0 and self.game.gamestate == 'active':
+            if self.game.player_clock.miliseconds == 0 or self.game.oponent_clock.miliseconds == 0:
+                self.game.end_game_by_time()
