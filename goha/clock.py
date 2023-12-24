@@ -13,6 +13,7 @@ class Clock:
 
         if (self.time == 0):
             self.miliseconds = False
+            self.added_time = 0
         elif (self.time == 1):
             self.miliseconds = 10*60*1000 # // 600
             self.added_time = 0*1000
