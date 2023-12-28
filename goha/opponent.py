@@ -19,6 +19,26 @@ class Opponent:
             random_square = board.legal_moves[random.randrange(len(board.legal_moves))]
             self.make_move(color, board, random_square)
             return random_square
+        
+    def gen_random_move_bot1(self, color, board):
+        considered_moves = [element for element in board.legal_moves if element not in board.territory[color]]
+        considered_moves_copy = considered_moves.copy()
+        board.restore_board()
+        for move in considered_moves:
+            board.board[move] = color
+            board.count(move, color)
+            if len(board.liberties) < 2:
+                considered_moves_copy.remove(move)
+            board.restore_board()
+            board.board[move] = EMPTY
+        if len(considered_moves_copy) != 0:
+            random_square = considered_moves_copy[random.randrange(len(considered_moves_copy))]
+            self.make_move(color, board, random_square)
+            print('random move')
+            return random_square
+        else:
+            print('pass move')
+            return None 
 
     def gen_move(self, color, board):
 
@@ -53,11 +73,9 @@ class Opponent:
         #
         # 2. If the group of the side to move has only one liberty then SAVE it by putting a stone there unless it's a board edge
         #
-        # 3. If the group of the side to move has two liberties then DEFEND by choosing the the one resulting in more liberties unless the group will have less than 2 liberties
+        # 3. If the group of the side to move has two liberties then DEFEND by choosing the the one resulting in more liberties
         #
         # 4. If opponent's group has more than one liberty then try to SURROUND it by placing stone on best liberty
-        #
-        # 5. Match patterns to build strong shape, if found any consider that instead of chasing the group
         #
         ################################################################################################################
 
@@ -96,7 +114,7 @@ class Opponent:
             if piece & color:
                 board.count(square, color)
                 if len(board.liberties) == 2:
-                    best_liberty = board.evaluate_0(color)
+                    best_liberty = board.evaluate_bot0(color)
                     if best_liberty:
                         defend = best_liberty
                         break
@@ -108,7 +126,7 @@ class Opponent:
             if piece & (3 - color):
                 board.count(square, (3 - color))
                 if len(board.liberties) > 1:
-                    best_liberty = board.evaluate_0(3 - color)
+                    best_liberty = board.evaluate_bot0(3 - color)
                     if best_liberty:
                         surround = best_liberty
                         break
@@ -130,7 +148,9 @@ class Opponent:
             print('random move')
             best_move = self.gen_random_move(color, board)
 
-        self.make_move(color, board, best_move)
+        if best_move != None:
+            self.make_move(color, board, best_move)
+
         return best_move
 
     def gen_move_bot1(self, color, board):
@@ -140,13 +160,13 @@ class Opponent:
         #
         # 1. If opponent's group have only one liberty left then CAPTURE it
         #
-        # 2. If the group of the side to move has only one liberty then SAVE it by putting a stone there unless: it's a board edge or the group will have less than 2 liberties
+        # 2. If the group of the side to move has only one liberty then SAVE it by putting a stone there unless: the group will have less than 2 liberties
         #
-        # 3. If the group of the side to move has two liberties then DEFEND by choosing the the one resulting in more liberties unless the group will have less than 2 liberties
+        # 3. If the group of the side to move has two liberties then DEFEND by choosing the the one resulting in more liberties unless: the group will have less than 2 liberties
         #
         # 4. If opponent's group has more than one liberty then try to SURROUND it unless the placed group will have less than 2 liberties
         #
-        # 5. Match patterns to build strong shape, if found any consider that instead of chasing the group
+        # 5. Else RANDOM move unless: placed on your own territory OR the group will have less than 2 liberties
         #
         ################################################################################################################
 
@@ -175,12 +195,11 @@ class Opponent:
                 board.count(square, (color))
                 if len(board.liberties) == 1 and (board.liberties[0] in board.legal_moves):
                     target_square = board.liberties[0]
-                    if not board.detect_edge(target_square):
-                        best_liberty = board.evaluate_1(color)
-                        if best_liberty:
-                            save = best_liberty
-                            board.restore_board()
-                            break
+                    best_liberty = board.evaluate_bot1_1(color)
+                    if best_liberty:
+                        save = best_liberty
+                        board.restore_board()
+                        break
                 board.restore_board()
 
         # defend own group
@@ -189,7 +208,7 @@ class Opponent:
             if piece & color:
                 board.count(square, color)
                 if len(board.liberties) == 2:
-                    best_liberty = board.evaluate_1(color)
+                    best_liberty = board.evaluate_bot1_1(color)
                     if best_liberty:
                         defend = best_liberty
                         board.restore_board()
@@ -202,7 +221,7 @@ class Opponent:
             if piece & (3 - color):
                 board.count(square, (3 - color))
                 if len(board.liberties) > 1:
-                    best_liberty = board.evaluate_2(3 - color)
+                    best_liberty = board.evaluate_bot1_2(3 - color)
                     if best_liberty:
                         surround = best_liberty
                         board.restore_board()
@@ -222,8 +241,9 @@ class Opponent:
             print('surround move')
             best_move = surround
         else:
-            print('random move')
-            best_move = self.gen_random_move(color, board)
+            best_move = self.gen_random_move_bot1(color, board)
 
-        self.make_move(color, board, best_move)
+        if best_move != None:
+            self.make_move(color, board, best_move)
+            
         return best_move

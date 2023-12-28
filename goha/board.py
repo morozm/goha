@@ -306,35 +306,29 @@ class Board:
                 return 1
         return 0
 
-    def evaluate_0(self, color): # find a liberty with best count
+    def evaluate_bot0(self, color):                # find a liberty with best count
         best_count = 0
         best_liberty = False
-        # loop over the liberties within the list
-        for liberty in self.liberties:
-            # put stone on board
-            self.board[liberty] = color
-            # count new liberties
-            self.count(liberty, color)
-            # found more liberties
-            if len(self.liberties) > best_count and liberty in self.legal_moves:
+        current_liberties = self.liberties.copy()
+        self.restore_board()
+        for liberty in current_liberties:       # loop over the liberties within the list
+            self.board[liberty] = color         # put stone on board
+            self.count(liberty, color)          # count new liberties
+            if len(self.liberties) > best_count and liberty in self.legal_moves:    # found more liberties
                 best_liberty = liberty
-                best_count = len(self.liberties)     
-            # restore board
-            self.restore_board()
-            # remove stone off board
-            self.board[liberty] = EMPTY
-        # return best liberty
-        return best_liberty
+                best_count = len(self.liberties)
+            self.restore_board()                # restore board
+            self.board[liberty] = EMPTY         # remove stone off board
+        return best_liberty                     # return best liberty
     
-    def evaluate_1(self, color): # find a liberty with best count > 1 AND not on the edge
+    def evaluate_bot1_0(self, color):                # find a liberty with best count > 1 AND not on the edge
         best_count = 1
         best_liberty = False
         current_liberties = self.liberties.copy()
+        self.restore_board()
         for liberty in current_liberties:
-            self.restore_board()
             self.board[liberty] = color
             self.count(liberty, color)
-            # self.print_board() # test
             if len(self.liberties) > best_count and not self.detect_edge(liberty) and liberty in self.legal_moves:
                 best_liberty = liberty
                 best_count = len(self.liberties)     
@@ -342,21 +336,34 @@ class Board:
             self.board[liberty] = EMPTY
         return best_liberty
     
-    def evaluate_2(self, color): # find a liberty with best count BUT it cant have less than 2 liberties itself
+    def evaluate_bot1_1(self, color):                # find a liberty with best count > 1
+        best_count = 1
+        best_liberty = False
+        current_liberties = self.liberties.copy()
+        self.restore_board()
+        for liberty in current_liberties:
+            self.board[liberty] = color
+            self.count(liberty, color)
+            if len(self.liberties) > best_count and liberty in self.legal_moves:
+                best_liberty = liberty
+                best_count = len(self.liberties)     
+            self.restore_board()
+            self.board[liberty] = EMPTY
+        return best_liberty
+    
+    def evaluate_bot1_2(self, color):                # find a liberty with best count BUT it cant have less than 2 liberties itself # AND it cant be on enemy territory
         best_count = 0
         best_liberty = False
         current_liberties = self.liberties.copy()
+        self.restore_board()
         for liberty in current_liberties:
-            self.restore_board()
             self.board[liberty] = color    
             self.count(liberty, color)
             liberties_length = len(self.liberties)
-            # self.print_board() # test
-            if liberties_length > best_count:
+            if liberties_length > best_count: # and liberty not in self.territory[color]:
                 self.restore_board()
                 self.board[liberty] = 3 - color
                 self.count(liberty, 3 - color)
-                # self.print_board() # test
                 if len(self.liberties) > 1:
                     best_liberty = liberty
                     best_count = liberties_length
