@@ -52,7 +52,7 @@ class Opponent:
 
         # hard difficulty
         elif (self.difficulty == 2):
-            return None
+            return self.gen_move_bot2(color, board)
             # to implement
 
         # random move
@@ -192,9 +192,8 @@ class Opponent:
         for square in range(len(board.board)):
             piece = board.board[square]
             if piece & (color):
-                board.count(square, (color))
+                board.count(square, color)
                 if len(board.liberties) == 1 and (board.liberties[0] in board.legal_moves):
-                    target_square = board.liberties[0]
                     best_liberty = board.evaluate_bot1_1(color)
                     if best_liberty:
                         save = best_liberty
@@ -246,4 +245,15 @@ class Opponent:
         if best_move != None:
             self.make_move(color, board, best_move)
             
+        return best_move
+    
+    def gen_move_bot2(self, color, board):
+        estimation_available_moves = []
+        for i in range(len(board.legal_moves)):
+            estimation_available_moves.append(board.estimation[board.legal_moves[i]])
+        moves_estimation_dict = dict(zip(board.legal_moves, estimation_available_moves))
+        sorted_moves_estimation = sorted(moves_estimation_dict.items(), key=lambda item: item[1], reverse=True)
+        print(sorted_moves_estimation)
+        best_move = sorted_moves_estimation[0][0]
+        self.make_move(color, board, best_move)
         return best_move

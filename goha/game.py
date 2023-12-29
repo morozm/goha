@@ -70,6 +70,7 @@ class Game:
         self.board.find_legal_moves(self.turn)
         self.board.acknowledge_super_ko(self.board_history, self.turn)
         self.board.count_territory()
+        self.board.estimate_move_power(self.turn) # optional
         if (self.turn == self.player_color):
             self.oponent_clock.pause()
             self.oponent_clock.add_time()
@@ -83,7 +84,8 @@ class Game:
             if (self.board_history[-1] == self.board_history[-3]):
                 print('Both players passed!')
                 self.end_game()
-        # self.board.print_board()
+        self.board.print_board()
+        self.board.print_estimation()
 
     def end_game(self):
         self.gamestate = 'inactive'

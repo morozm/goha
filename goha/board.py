@@ -14,6 +14,7 @@ class Board:
         self.legal_moves = []
         self.offsets = []
         self.territory = [[], [], [], []]
+        self.estimation = []
         self.board_size = board_size
         self.territory_drawn = False
         self.settings = Settings()
@@ -28,6 +29,7 @@ class Board:
         self.square_size = min((WIDTH-BOARD_MENU_SPACE)//self.cols, (HEIGHT-BOARD_MENU_SPACE)//self.rows)
         self.board_height_offset = max(0, (HEIGHT - self.square_size*self.rows)//2)
         self.board_width_offset = max(0, (WIDTH - self.square_size*self.cols)//2)
+        self.estimation = [0] * ((BOARDS[self.board_size][1]+2)*(BOARDS[self.board_size][2]+2))
         self.create_offsets()
 
     def load_settings(self):
@@ -371,6 +373,77 @@ class Board:
             self.board[liberty] = EMPTY
         return best_liberty
     
+    def estimate_move_power(self, color):
+        self.estimation = [[0] * 7 for _ in range((BOARDS[self.board_size][1]+2)*(BOARDS[self.board_size][2]+2))] #[capture, save, defend, surround, on territory, od edge]
+        for square in range(len(self.board)):
+            piece = self.board[square]
+            if piece == OFFBOARD:
+                continue
+
+            if piece & (3 - color):         # capture
+                self.count(square, (3 - color))
+                if len(self.liberties) == 1 and (self.liberties[0] in self.legal_moves):
+                    if self.estimation[self.liberties[0]][0] < (len(self.block)+3):
+                        self.estimation[self.liberties[0]][0] = (len(self.block)+3)
+                self.restore_board()
+
+            if piece & (color):             # save
+                self.count(square, color)
+                if len(self.liberties) == 1 and (self.liberties[0] in self.legal_moves):
+                    length = len(self.block)
+                    current_liberties = self.liberties.copy()
+                    self.restore_board()
+                    for liberty in current_liberties:
+                        self.board[liberty] = color
+                        self.count(liberty, color)
+                        if len(self.liberties) > 1 and liberty in self.legal_moves:
+                            if self.estimation[self.liberties[0]][1] < (length+2):
+                                self.estimation[liberty][1] = (length+2)    
+                        self.restore_board()
+                        self.board[liberty] = EMPTY
+                self.restore_board()
+
+            if piece & color:               # defend
+                self.count(square, color)
+                if len(self.liberties) == 2:
+                    length = len(self.block)
+                    current_liberties = self.liberties.copy()
+                    self.restore_board()
+                    for liberty in current_liberties:
+                        self.board[liberty] = color
+                        self.count(liberty, color)
+                        if len(self.liberties) > 1 and liberty in self.legal_moves:
+                            if self.estimation[self.liberties[0]][2] < (length+1):
+                                self.estimation[liberty][2] = (length+1)    
+                        self.restore_board()
+                        self.board[liberty] = EMPTY
+                self.restore_board()
+
+            if piece & (3 - color):         # surround
+                self.count(square, (3 - color))
+                if len(self.liberties) > 1:
+                    current_liberties = self.liberties.copy()
+                    self.restore_board()
+                    for liberty in current_liberties:
+                        self.board[liberty] = color
+                        self.count(liberty, color)
+                        if len(self.liberties) > 1:
+                            self.estimation[liberty][3] = 1
+                        self.restore_board()
+                        self.board[liberty] = EMPTY
+                self.restore_board()
+
+            if square in self.territory[BLACK] or square in self.territory[WHITE]:
+                self.estimation[square][4] = -1
+
+            if self.detect_edge(square):
+                self.estimation[square][5] = -1
+
+        self.estimation = [sum(row) for row in self.estimation]
+
+            # close to center to implement
+        # print(self.estimation)
+
     def print_board(self):
         files = '     a b c d e f g h j k l m n o p q r s t'
         pieces = '.#o  bw +'
@@ -383,5 +456,15 @@ class Board:
                     space = '  ' if len(self.board) == 121 else '   '
                     print((space if rank < 10 else '  ') + str(rank), end='')
                 print(pieces[stone] + ' ', end='')    
+            print()
+        print(('' if len(self.board) == 121 else ' ') + files[0:(BOARDS[self.board_size][1] + 2)*2] + '\n')
+
+    def print_estimation(self):
+        files = '     a b c d e f g h j k l m n o p q r s t'
+        for row in range(BOARDS[self.board_size][1] + 2):
+            for col in range(BOARDS[self.board_size][1] + 2):
+                square = row * (BOARDS[self.board_size][1] + 2) + col
+                estimation = self.estimation[square]
+                print(str(estimation) + '\t', end='')    
             print()
         print(('' if len(self.board) == 121 else ' ') + files[0:(BOARDS[self.board_size][1] + 2)*2] + '\n')
