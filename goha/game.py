@@ -1,9 +1,12 @@
 import pygame
 from .board import Board
 from .clock import Clock
+from .gamesimple import Gamesimple
+from .boardsimple import Boardsimple
 from .opponent import Opponent
 from .settings import Settings
 from .constants import BLACK, WHITE, BLUECOLOR
+from copy import deepcopy
 
 class Game:
     def __init__(self, win, opponent_difficulty=0, player_color=0, handicap=0, time=0, board_size=0):
@@ -40,9 +43,6 @@ class Game:
 
     def reset(self):
         self._init()
-
-    def winner(self):
-        return self.board.winner()
 
     def place(self, row, col):
         piece = self.board.get_piece(row, col)
@@ -136,19 +136,28 @@ class Game:
 
     def opponent_moves(self):
         if self.gamestate == 'active':
-            move = self.opponent.gen_move(self.turn, self.board)
+            move = self.opponent.gen_move(self.turn, self.board, self)
             if move != None:
                 self.last_move = move
+    
+    def simple_copy(self):
+        copy = Gamesimple(self.player_color, self.board_size)
 
-    # def opponent_makes_first_move(self): # unused
-    #     if self.gamestate == 'active' and self.player_color == 2 and self.turn == 1:
-    #         self.opponent_moves()
-    #         self.process_move()
+        copy.board.board = self.board.board.copy()
+        copy.board.board_copy = self.board.board_copy.copy()
+        copy.board.block = self.board.block.copy()
+        copy.board.liberties = self.board.liberties.copy()
+        copy.board.legal_moves = self.board.legal_moves.copy()
+        copy.board.territory = self.board.territory.copy()
+        copy.board.estimation = self.board.estimation.copy()
 
-    # def draw_valid_moves(self, moves): #unused
-    #     for move in moves:
-    #         row, col = move
-    #         pygame.draw.circle(self.win, BLUECOLOR, (col * SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_WIDTH_OFFSET, row * SQUARE_SIZE + SQUARE_SIZE//2 + BOARD_HEIGHT_OFFSET), SQUARE_SIZE//6)
+        copy.turn = self.turn
+        copy.board_history = self.board_history.copy()
+        copy.score = self.score.copy()
+        copy.last_move = self.last_move
+        copy.gamestate = self.gamestate
+
+        return copy
 
     def change_turn(self):
         if self.turn == BLACK:

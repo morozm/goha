@@ -65,9 +65,6 @@ class Gamemenu:
         return row, col
     
     def draw_game_menu(self):
-        if self.game.winner() != None:
-            print(self.game.winner())
-            self.running = False
         self.game.board.draw(self.win)
         self.game.board.draw_last_move(self.win, self.game.last_move)
         self.game.board.draw_territory(self.win)
@@ -184,8 +181,13 @@ class Gamemenu:
 
         if self.game.player_color == self.game.turn:
             self.move_time = pygame.time.get_ticks()
-        if pygame.time.get_ticks() - self.move_time >= 500:
+
+        if (pygame.time.get_ticks() - self.move_time >= 500 and self.game.opponent_difficulty != 3) :
             if (self.game.opponent_difficulty != 4 and self.game.gamestate == 'active'): # if not playing solo
+                self.game.opponent_moves()
+                self.game.process_move()
+        elif self.game.opponent_difficulty == 3:
+            if self.game.gamestate == 'active':
                 self.game.opponent_moves()
                 self.game.process_move()
         

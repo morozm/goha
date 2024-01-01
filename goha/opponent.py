@@ -40,7 +40,7 @@ class Opponent:
             print('pass move')
             return None 
 
-    def gen_move(self, color, board):
+    def gen_move(self, color, board, game):
 
         # easy difficulty
         if (self.difficulty == 0):
@@ -52,7 +52,7 @@ class Opponent:
 
         # hard difficulty
         elif (self.difficulty == 2):
-            return self.gen_move_bot2(color, board)
+            return self.gen_move_bot3(color, board, game)
             # to implement
 
         # random move
@@ -253,7 +253,50 @@ class Opponent:
             estimation_available_moves.append(board.estimation[board.legal_moves[i]])
         moves_estimation_dict = dict(zip(board.legal_moves, estimation_available_moves))
         sorted_moves_estimation = sorted(moves_estimation_dict.items(), key=lambda item: item[1], reverse=True)
-        print(sorted_moves_estimation)
-        best_move = sorted_moves_estimation[0][0]
-        self.make_move(color, board, best_move)
+        # print(sorted_moves_estimation)
+        if sorted_moves_estimation[0][1] >= 0:
+            best_move = sorted_moves_estimation[0][0]
+        else:
+            best_move = None
+
+        if best_move != None:
+            self.make_move(color, board, best_move)
+            
         return best_move
+    
+    def gen_move_bot3(self, color, board, game):
+        best_move = self.minimax(board, 5, color, game, color, 6)[1] # depth and number of top moves
+
+        if best_move != None:
+            self.make_move(color, board, best_move)
+            
+        return best_move
+        
+    def minimax(self, position, depth, max_player, game, color, top_moves):
+        best_move = None
+        if depth == 0 or game.gamestate != 'active':
+            # print ((game.score[color] + len(game.board.territory[color])) - (game.score[3-color] + len(game.board.territory[3-color])))
+            return (game.score[color] + len(game.board.territory[color])) - (game.score[3-color] + len(game.board.territory[3-color])), best_move
+
+        if max_player:
+            maxEval = float('-inf')
+            for move in game.board.take_top_estimation(top_moves):
+            # for move in game.board.legal_moves:
+                game_copy = game.simple_copy()
+                position = game_copy.bot3_move(move)
+                evaluation = self.minimax(position, depth-1, False, game_copy, color, top_moves)[0]
+                if maxEval < evaluation:
+                    best_move = move
+                    maxEval = evaluation
+            return maxEval, best_move
+        else:
+            minEval = float('+inf')
+            for move in game.board.take_top_estimation(top_moves):
+            # for move in game.board.legal_moves:
+                game_copy = game.simple_copy()
+                position = game_copy.bot3_move(move)
+                evaluation = self.minimax(position, depth-1, True, game_copy, color, top_moves)[0]
+                if minEval > evaluation:
+                    best_move = move
+                    minEval = evaluation
+            return minEval, best_move
