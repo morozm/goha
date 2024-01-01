@@ -1,6 +1,6 @@
 import random
 import pygame
-from .constants import EMPTY
+from .constants import EMPTY, WIN
 
 class Opponent:
     def __init__(self, difficulty):
@@ -282,6 +282,8 @@ class Opponent:
             maxEval = float('-inf')
             for move in game.board.take_top_estimation(top_moves):
             # for move in game.board.legal_moves:
+                game.board.draw_green_circle(WIN, move)     # comment
+                pygame.display.update()                     # comment
                 game_copy = game.simple_copy()
                 position = game_copy.bot3_move(move)
                 evaluation = self.minimax(position, depth-1, False, game_copy, color, top_moves)[0]
@@ -293,6 +295,8 @@ class Opponent:
             minEval = float('+inf')
             for move in game.board.take_top_estimation(top_moves):
             # for move in game.board.legal_moves:
+                game.board.draw_green_circle(WIN, move)     # comment
+                pygame.display.update()                     # comment
                 game_copy = game.simple_copy()
                 position = game_copy.bot3_move(move)
                 evaluation = self.minimax(position, depth-1, True, game_copy, color, top_moves)[0]

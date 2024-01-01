@@ -51,5 +51,9 @@ class PieceToDraw:
         pygame.draw.rect(win, GREYCOLOR, territory_rect1)
         pygame.draw.rect(win, self.color, territory_rect2)
 
+    def draw_green_circle(self, offset, win):
+        radius = round((100 - PADDING)/100 * self.square_size / 2)
+        pygame.draw.circle(win, (0, 255, 0), (self.x + offset[0], self.y + offset[1]), (radius + OUTLINE), 5)
+
     def __repr__(self):
         return str(self.color)

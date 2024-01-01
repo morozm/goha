@@ -167,6 +167,13 @@ class Board:
                 piece.draw_hover_piece(self.offsets[square], win)
             else:
                 piece.draw_hover_piece([0, 0], win)
+
+    def draw_green_circle(self, win, square):
+        piece = PieceToDraw(square, (0, 255, 0), self.rows, self.cols, self.square_size, self.board_height_offset, self.board_width_offset)
+        if (self.stone_centering == 0):
+            piece.draw_green_circle(self.offsets[square], win)
+        else:
+            piece.draw_green_circle([0, 0], win)
     
     def count(self, square, color): # count liberties
         piece = self.board[square]

@@ -20,6 +20,9 @@ class Boardsimple:
     def _init(self):
         self.board = BOARDS[self.board_size][0].copy()
         self.rows, self.cols = BOARDS[self.board_size][1], BOARDS[self.board_size][2]
+        self.square_size = min((WIDTH-BOARD_MENU_SPACE)//self.cols, (HEIGHT-BOARD_MENU_SPACE)//self.rows)
+        self.board_height_offset = max(0, (HEIGHT - self.square_size*self.rows)//2)
+        self.board_width_offset = max(0, (WIDTH - self.square_size*self.cols)//2)
         self.estimation = [0] * ((BOARDS[self.board_size][1]+2)*(BOARDS[self.board_size][2]+2))
 
     def calc_square(self, row, col):
@@ -261,3 +264,7 @@ class Boardsimple:
         top_moves = [element[0] for element in top_moves]
         # print(top_moves)
         return top_moves
+    
+    def draw_green_circle(self, win, square):
+        piece = PieceToDraw(square, (0, 255, 0), self.rows, self.cols, self.square_size, self.board_height_offset, self.board_width_offset)
+        piece.draw_green_circle([0, 0], win)
