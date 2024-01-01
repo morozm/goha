@@ -265,7 +265,7 @@ class Opponent:
         return best_move
     
     def gen_move_bot3(self, color, board, game):
-        best_move = self.minimax(board, 5, color, game, color, 6)[1] # depth and number of top moves
+        best_move = self.minimax(board, 5, color, game, color, 4)[1] # depth and number of top moves
 
         if best_move != None:
             self.make_move(color, board, best_move)

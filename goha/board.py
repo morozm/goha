@@ -81,6 +81,12 @@ class Board:
 
     def calc_square(self, row, col):
         return (row+1)*(self.cols+2)+col+1
+    
+    def calc_row_col(self, square):
+        cols_with_padding = self.cols + 2
+        row = square // cols_with_padding - 1
+        col = square % cols_with_padding - 1
+        return row, col
 
     def place(self, row, col, turn):
         self.place2(self.calc_square(row, col), turn)
@@ -430,9 +436,10 @@ class Board:
             if self.detect_edge(square):
                 self.estimation[square][5] = -1
 
-        self.estimation = [sum(row) for row in self.estimation]
+            row, col = self.calc_row_col(square)
+            self.estimation[square][6] = -round((abs((self.rows-1)/2 - row)/40 + abs((self.cols-1)/2 - col)/40), 3)
 
-            # close to center to implement
+        self.estimation = [sum(row) for row in self.estimation]
         # print(self.estimation)
 
     def take_top_estimation(self, how_many):
