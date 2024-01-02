@@ -249,7 +249,7 @@ class Boardsimple:
                 self.estimation[square][5] = -1
 
             row, col = self.calc_row_col(square)
-            self.estimation[square][6] = -round((abs((self.rows-1)/2 - row)/40 + abs((self.cols-1)/2 - col)/40), 3)
+            self.estimation[square][6] = -round((abs((self.rows-1)/2 - row)/(self.rows-1)/4 + abs((self.cols-1)/2 - col)/(self.cols-1)/4), 3)
 
         self.estimation = [sum(row) for row in self.estimation]
         # print(self.estimation)
