@@ -16,6 +16,7 @@ class Gamesimple:
         self.last_move = None
         self.gamestate = 'active'
         self.board.find_legal_moves(self.turn)
+        self.board.estimate_move_power(self.turn)
         self.check_if_legal_moves_exist()
 
     def check_if_legal_moves_exist(self):

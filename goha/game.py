@@ -2,11 +2,9 @@ import pygame
 from .board import Board
 from .clock import Clock
 from .gamesimple import Gamesimple
-from .boardsimple import Boardsimple
 from .opponent import Opponent
 from .settings import Settings
-from .constants import BLACK, WHITE, BLUECOLOR
-from copy import deepcopy
+from .constants import BLACK, WHITE
 
 class Game:
     def __init__(self, win, opponent_difficulty=0, player_color=0, handicap=0, time=0, board_size=0):
@@ -33,6 +31,7 @@ class Game:
         self.last_move = None
         self.gamestate = 'active'
         self.board.find_legal_moves(self.turn)
+        self.board.estimate_move_power(self.turn)
         self.check_if_legal_moves_exist()
         self.place_whole_handicap()
         self.initialize_score()
@@ -94,7 +93,7 @@ class Game:
         self.oponent_clock.pause()
         self.score[BLACK] += len(self.board.territory[BLACK])
         self.score[WHITE] += len(self.board.territory[WHITE])
-        if self.score[1] < self.score[2] and self.opponent_difficulty != 4:
+        if self.score[self.player_color] < self.score[3-self.player_color] and self.opponent_difficulty != 4:
             pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamelost.wav'))
         else:
             pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamewon.wav'))

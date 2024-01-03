@@ -265,7 +265,7 @@ class Opponent:
         return best_move
     
     def gen_move_bot3(self, color, board, game):
-        best_move = self.minimax(board, color, game, color, 6, 5, float('-inf'), float('+inf'))[1] # depth and number of top moves
+        best_move = self.minimax(board, color, game, color, 6, 3, float('-inf'), float('+inf'))[1] # depth and number of top moves
 
         if best_move != None:
             self.make_move(color, board, best_move)
@@ -282,8 +282,9 @@ class Opponent:
             maxEval = float('-inf')
             for move in game.board.take_top_estimation(top_moves):
             # for move in game.board.legal_moves:
-                game.board.draw_green_circle(WIN, move)     # comment
-                pygame.display.update()                     # comment
+                if move != None:                                # comment
+                    game.board.draw_green_circle(WIN, move)     # comment
+                    pygame.display.update()                     # comment
                 game_copy = game.simple_copy()
                 position = game_copy.bot3_move(move)
                 evaluation = self.minimax(position, False, game_copy, color, depth-1, top_moves, alpha, beta)[0]
@@ -298,8 +299,9 @@ class Opponent:
             minEval = float('+inf')
             for move in game.board.take_top_estimation(top_moves):
             # for move in game.board.legal_moves:
-                game.board.draw_green_circle(WIN, move)     # comment
-                pygame.display.update()                     # comment
+                if move != None:                                # comment
+                    game.board.draw_green_circle(WIN, move)     # comment
+                    pygame.display.update()                     # comment
                 game_copy = game.simple_copy()
                 position = game_copy.bot3_move(move)
                 evaluation = self.minimax(position, True, game_copy, color, depth-1, top_moves, alpha, beta)[0]

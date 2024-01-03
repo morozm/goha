@@ -26,6 +26,6 @@ class Background:
 
     def draw_background(self):
         self.win.fill(WHITECOLOR)
-        # for circle in self.circles:
-        #     pygame.draw.circle(self.win, circle.color, (circle.x, circle.y), circle.radius)
-        #     circle.move()
+        for circle in self.circles:
+            pygame.draw.circle(self.win, circle.color, (circle.x, circle.y), circle.radius)
+            circle.move()

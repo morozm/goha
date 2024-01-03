@@ -92,7 +92,8 @@ class Board:
         self.place2(self.calc_square(row, col), turn)
 
     def place2(self, square, turn):
-        self.board[square] = turn
+        if (square != None):
+            self.board[square] = turn
     
     def get_piece(self, row, col):
         return self.board[self.calc_square(row, col)]
@@ -425,7 +426,18 @@ class Board:
 
             if piece & (3 - color):         # surround
                 self.count(square, (3 - color))
-                if len(self.liberties) > 1:
+                if len(self.liberties) == 2:
+                    length = len(self.block)
+                    current_liberties = self.liberties.copy()
+                    self.restore_board()
+                    for liberty in current_liberties:
+                        self.board[liberty] = color
+                        self.count(liberty, color)
+                        if len(self.liberties) > 1:
+                            self.estimation[liberty][3] = (length+1)
+                        self.restore_board()
+                        self.board[liberty] = EMPTY
+                elif len(self.liberties) > 2:
                     current_liberties = self.liberties.copy()
                     self.restore_board()
                     for liberty in current_liberties:
@@ -457,6 +469,7 @@ class Board:
         sorted_moves_estimation = sorted(moves_estimation_dict.items(), key=lambda item: item[1], reverse=True)
         top_moves = sorted_moves_estimation[:how_many]
         top_moves = [element[0] for element in top_moves]
+        top_moves.append(None)
         # print(top_moves)
         return top_moves
 
