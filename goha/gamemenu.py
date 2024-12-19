@@ -182,14 +182,15 @@ class Gamemenu:
         if self.game.player_color == self.game.turn:
             self.move_time = pygame.time.get_ticks()
 
-        if (pygame.time.get_ticks() - self.move_time >= 500 and self.game.opponent_difficulty != 3) :
-            if (self.game.opponent_difficulty != 4 and self.game.gamestate == 'active'): # if not playing solo
-                self.game.opponent_moves()
-                self.game.process_move()
-        elif self.game.opponent_difficulty == 3:
-            if self.game.gamestate == 'active':
-                self.game.opponent_moves()
-                self.game.process_move()
+        if self.game.player_color != self.game.turn:
+            if (pygame.time.get_ticks() - self.move_time >= 500 and self.game.opponent_difficulty != 3) :
+                if (self.game.opponent_difficulty != 4 and self.game.gamestate == 'active'): # if not playing solo
+                    self.game.opponent_moves()
+                    self.game.process_move()
+            elif self.game.opponent_difficulty == 3:
+                if self.game.gamestate == 'active':
+                    self.game.opponent_moves()
+                    self.game.process_move()
         
         if self.game.time != 0 and self.game.gamestate == 'active':
             if self.game.player_clock.miliseconds == 0 or self.game.oponent_clock.miliseconds == 0:

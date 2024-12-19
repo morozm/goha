@@ -53,7 +53,6 @@ class Opponent:
         # hard difficulty
         elif (self.difficulty == 2):
             return self.gen_move_bot3(color, board, game)
-            # to implement
 
         # random move
         elif (self.difficulty == 3):
@@ -265,7 +264,23 @@ class Opponent:
         return best_move
     
     def gen_move_bot3(self, color, board, game):
-        best_move = self.minimax(board, color, game, color, 6, 3, float('-inf'), float('+inf'))[1] # depth and number of top moves
+        best_move = self.minimax(board, color, game, color, 6, 5, float('-inf'), float('+inf'))[1] # depth and number of top moves
+
+        if best_move != None:
+            self.make_move(color, board, best_move)
+            
+        return best_move
+    
+    def gen_move_bot4(self, color, board, game):
+        best_move = self.minimax2(board, color, game, color, 6, 12, float('-inf'), float('+inf'))[1] # depth and number of top moves
+
+        if best_move != None:
+            self.make_move(color, board, best_move)
+            
+        return best_move
+    
+    def gen_move_bot_puzzle(self, color, board, game):
+        best_move = self.minimax3(board, color, game, color, 11, 5, float('-inf'), float('+inf'))[1] # depth and number of top moves
 
         if best_move != None:
             self.make_move(color, board, best_move)
@@ -305,6 +320,80 @@ class Opponent:
                 game_copy = game.simple_copy()
                 position = game_copy.bot3_move(move)
                 evaluation = self.minimax(position, True, game_copy, color, depth-1, top_moves, alpha, beta)[0]
+                if minEval > evaluation:
+                    best_move = move
+                    minEval = evaluation
+                beta = min(beta, evaluation)                # alpha beta pruning
+                if beta <= alpha:                           # alpha beta pruning
+                    break                                   # alpha beta pruning
+            return minEval, best_move
+        
+    def minimax2(self, position, max_player, game, color, depth, top_moves, alpha, beta):
+        best_move = None
+        if depth == 0 or game.gamestate != 'active':
+            # print ((game.score[color] + len(game.board.territory[color])) - (game.score[3-color] + len(game.board.territory[3-color])))
+            # return (game.score[color] + len(game.board.territory[color])) - (game.score[3-color] + len(game.board.territory[3-color])), best_move
+            return (game.score[color]/2 + game.board.area[color]*3/4 + len(game.board.territory[color])) - (game.score[3-color]/2 + game.board.area[3-color]*3/4 + len(game.board.territory[3-color])), best_move
+
+        if max_player:
+            maxEval = float('-inf')
+            for move in game.board.take_top_estimation(top_moves):
+            # for move in game.board.legal_moves:
+                # if move != None:                                # comment
+                #     game.board.draw_green_circle(WIN, move)     # comment
+                #     pygame.display.update()                     # comment
+                game_copy = game.simple_copy()
+                position = game_copy.bot3_move(move)
+                evaluation = self.minimax2(position, False, game_copy, color, depth-1, int(top_moves//1.3), alpha, beta)[0]
+                if maxEval < evaluation:
+                    best_move = move
+                    maxEval = evaluation
+                alpha = max(alpha, evaluation)              # alpha beta pruning
+                if beta <= alpha:                           # alpha beta pruning
+                    break                                   # alpha beta pruning
+            return maxEval, best_move
+        else:
+            minEval = float('+inf')
+            for move in game.board.take_top_estimation(top_moves):
+            # for move in game.board.legal_moves:
+                # if move != None:                                # comment
+                #     game.board.draw_green_circle(WIN, move)     # comment
+                #     pygame.display.update()                     # comment
+                game_copy = game.simple_copy()
+                position = game_copy.bot3_move(move)
+                evaluation = self.minimax2(position, True, game_copy, color, depth-1, int(top_moves//1.3), alpha, beta)[0]
+                if minEval > evaluation:
+                    best_move = move
+                    minEval = evaluation
+                beta = min(beta, evaluation)                # alpha beta pruning
+                if beta <= alpha:                           # alpha beta pruning
+                    break                                   # alpha beta pruning
+            return minEval, best_move
+        
+    def minimax3(self, position, max_player, game, color, depth, top_moves, alpha, beta):
+        best_move = None
+        if depth == 0 or game.gamestate != 'active':
+            return (game.score[color]) - (game.score[3-color]), best_move
+
+        if max_player:
+            maxEval = float('-inf')
+            for move in game.board.take_top_estimation(top_moves):
+                game_copy = game.simple_copy()
+                position = game_copy.bot3_move(move)
+                evaluation = self.minimax3(position, False, game_copy, color, depth-1, top_moves, alpha, beta)[0]
+                if maxEval < evaluation:
+                    best_move = move
+                    maxEval = evaluation
+                alpha = max(alpha, evaluation)              # alpha beta pruning
+                if beta <= alpha:                           # alpha beta pruning
+                    break                                   # alpha beta pruning
+            return maxEval, best_move
+        else:
+            minEval = float('+inf')
+            for move in game.board.take_top_estimation(top_moves):
+                game_copy = game.simple_copy()
+                position = game_copy.bot3_move(move)
+                evaluation = self.minimax3(position, True, game_copy, color, depth-1, top_moves, alpha, beta)[0]
                 if minEval > evaluation:
                     best_move = move
                     minEval = evaluation

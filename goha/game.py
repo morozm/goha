@@ -32,6 +32,7 @@ class Game:
         self.gamestate = 'active'
         self.board.find_legal_moves(self.turn)
         self.board.estimate_move_power(self.turn)
+        self.board.print_estimation()
         self.check_if_legal_moves_exist()
         self.place_whole_handicap()
         self.initialize_score()

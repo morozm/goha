@@ -14,6 +14,7 @@ class Board:
         self.legal_moves = []
         self.offsets = []
         self.territory = [[], [], [], []]
+        self.area = [[], [], [], []]
         self.estimation = []
         self.board_size = board_size
         self.territory_drawn = False
@@ -194,6 +195,14 @@ class Board:
     def count_territory(self):
         self.territory[BLACK] = []
         self.territory[WHITE] = []
+        self.area[BLACK] = 0
+        self.area[WHITE] = 0
+        for square in range(len(self.board)):
+            if self.board[square] == BLACK:
+                self.area[BLACK] += 1
+            elif self.board[square] == WHITE:
+                self.area[WHITE] += 1
+        # print(self.area[BLACK], self.area[WHITE])
         for square in range(len(self.board)):
             notwhite = notblack = False
             self.count_territory2(square)
@@ -302,7 +311,7 @@ class Board:
                     self.restore_board()
             positions = [i for i in range(len(board_history)) if i % 2 == 2-color]
             for i in positions:
-                if self.board == board_history[i]:
+                if square in self.legal_moves and self.board == board_history[i]:
                     self.legal_moves.remove(square)
             self.board = self.board_copy.copy()
 
@@ -444,21 +453,38 @@ class Board:
                         self.board[liberty] = color
                         self.count(liberty, color)
                         if len(self.liberties) > 1:
-                            self.estimation[liberty][3] = 1
+                            self.estimation[liberty][3] = 2
                         self.restore_board()
                         self.board[liberty] = EMPTY
                 self.restore_board()
 
-            if square in self.territory[BLACK] or square in self.territory[WHITE]:
+            if square in self.territory[color]:
                 self.estimation[square][4] = -1
+            elif square in self.territory[3-color]:
+                self.estimation[square][4] = -0.5
 
-            if self.detect_edge(square):
-                self.estimation[square][5] = -1
+            if square in self.legal_moves:
+                friendly = 0
+                enemy = 0
+                empty = 0
+                neighbours = [square - (self.cols+3), square - (self.cols+2), square - (self.cols+1), square - 1, square + 1, square + (self.cols+1), square + (self.cols+2), square + (self.cols+3)]
+                for neighbour in neighbours:
+                    if self.board[neighbour] == color: 
+                        friendly += 1
+                    elif self.board[neighbour] == (3-color): 
+                        enemy += 1
+                    elif self.board[neighbour] == EMPTY:
+                        empty += 1
+                self.estimation[square][5] = min((friendly - enemy), 0)*0.1 + empty*0.05
+
+            # if self.detect_edge(square):
+            #     self.estimation[square][5] = -1
+                
 
             row, col = self.calc_row_col(square)
             self.estimation[square][6] = -round((abs((self.rows-1)/2 - row)/(self.rows-1)/4 + abs((self.cols-1)/2 - col)/(self.cols-1)/4), 3)
 
-        self.estimation = [sum(row) for row in self.estimation]
+        self.estimation = [round(sum(row), 3) for row in self.estimation]
         # print(self.estimation)
 
     def take_top_estimation(self, how_many):
