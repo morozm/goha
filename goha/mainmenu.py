@@ -10,6 +10,7 @@ from .settingsmenu import Settingsmenu
 from .infomenu import Infomenu
 from .game import Game
 from .constants import WIDTH, FPS
+from .utils import resource_path
 
 class Mainmenu:
     def __init__(self, win):
@@ -22,8 +23,8 @@ class Mainmenu:
         self._init()
 
     def _init(self):
-        self.button_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 36)
-        self.title_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 100)
+        self.button_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), 36)
+        self.title_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), 100)
 
         self.button_width = 400
         self.button_height = 70
@@ -45,10 +46,10 @@ class Mainmenu:
 
     def play_music(self):
         self.current_music_index = 0
-        self.music_files = [file for file in os.listdir('goha/music') if file.endswith((".mp3", ".wav"))]
+        self.music_files = [file for file in os.listdir(resource_path('music')) if file.endswith((".mp3", ".wav"))]
         random.shuffle(self.music_files)
         pygame.mixer.music.set_endevent(pygame.USEREVENT + 1)
-        pygame.mixer.music.load(os.path.join('goha/music', self.music_files[self.current_music_index]))
+        pygame.mixer.music.load(os.path.join(resource_path('music'), self.music_files[self.current_music_index]))
         pygame.mixer.music.set_volume(self.settings.get_volume()/100)
         pygame.mixer.music.play()
         pygame.mixer.Channel(1).set_volume(self.settings.get_volume()/100)
@@ -57,7 +58,7 @@ class Mainmenu:
         for event in self.events:
             if event.type == pygame.USEREVENT + 1:
                     self.current_music_index = (self.current_music_index + 1) % len(self.music_files)
-                    pygame.mixer.music.load(os.path.join('goha/music', self.music_files[self.current_music_index]))
+                    pygame.mixer.music.load(os.path.join(resource_path('music'), self.music_files[self.current_music_index]))
                     pygame.mixer.music.play()
 
     def draw_button(self, screen, text, x, y, width, height, base_color, hover_color, text_color, is_hovered):

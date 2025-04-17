@@ -2,6 +2,7 @@ import pygame
 import sys
 from .settings import Settings
 from .constants import WIDTH, THEMES, LANGUAGES, THEMES_LIST, LANGUAGES_LIST
+from .utils import resource_path
 
 class Settingsmenu:
     def __init__(self, win):
@@ -14,8 +15,8 @@ class Settingsmenu:
     def _init(self):
         self.button_font_size = 36
         self.title_font_size = 100
-        self.button_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", self.button_font_size)
-        self.title_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", self.title_font_size)
+        self.button_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), self.button_font_size)
+        self.title_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), self.title_font_size)
 
         self.options = ["Nick", "Theme", "Language", "Stone Centering", "Volume"]
         self.options_start_y = 300

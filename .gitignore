@@ -1,3 +1,6 @@
+build
+dist
+goha.spec
 concept.txt
 settings.json
 test.py

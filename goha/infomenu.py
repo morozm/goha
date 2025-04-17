@@ -2,6 +2,7 @@ import pygame
 import sys
 from .settings import Settings
 from .constants import WIDTH
+from .utils import resource_path
 
 class Infomenu:
     def __init__(self, win):
@@ -12,9 +13,9 @@ class Infomenu:
         self._init()
 
     def _init(self):
-        self.button_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 36)
-        self.title_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 100)
-        self.text_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 20)
+        self.button_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), 36)
+        self.title_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), 100)
+        self.text_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), 20)
 
         self.button_width = 400
         self.button_height = 70

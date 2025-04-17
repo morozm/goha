@@ -2,6 +2,7 @@ import pygame
 import sys
 from .settings import Settings
 from .constants import WIDTH
+from .utils import resource_path
 
 class Newgamemenu:
     def __init__(self, win, game):
@@ -22,8 +23,8 @@ class Newgamemenu:
 
         self.button_font_size = 36
         self.title_font_size = 100
-        self.button_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", self.button_font_size)
-        self.title_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", self.title_font_size)
+        self.button_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), self.button_font_size)
+        self.title_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), self.title_font_size)
 
         self.options = ["Bot Difficulty", "Play As", "Handicap", "Time", "Board Size"]
         self.options_start_y = 300

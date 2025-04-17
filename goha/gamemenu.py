@@ -2,6 +2,7 @@ import pygame
 import sys
 from .constants import WIDTH, HEIGHT, GREYCOLOR, PADDING, OUTLINE, STONECOLORS
 from .settings import Settings
+from .utils import resource_path
 
 class Gamemenu:
     def __init__(self, win, game):
@@ -20,16 +21,16 @@ class Gamemenu:
         self.board_height_offset = self.game.board.board_height_offset
         self.board_width_offset = self.game.board.board_width_offset
 
-        self.name_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 20)
-        self.score_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 30)
-        self.info_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 20)
+        self.name_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), 20)
+        self.score_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), 30)
+        self.info_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), 20)
 
-        self.usericon = pygame.image.load("goha/assets/usericon64.png")
-        self.boticon = pygame.image.load("goha/assets/boticon64.png")
-        self.passicon = pygame.image.load("goha/assets/hand-shake32.png")
-        self.resignicon = pygame.image.load("goha/assets/white-flag32.png")
-        self.toolsicon = pygame.image.load("goha/assets/settings32.png")
-        self.menuicon = pygame.image.load("goha/assets/menu32.png")
+        self.usericon = pygame.image.load(resource_path("assets/usericon64.png"))
+        self.boticon = pygame.image.load(resource_path("assets/boticon64.png"))
+        self.passicon = pygame.image.load(resource_path("assets/hand-shake32.png"))
+        self.resignicon = pygame.image.load(resource_path("assets/white-flag32.png"))
+        self.toolsicon = pygame.image.load(resource_path("assets/settings32.png"))
+        self.menuicon = pygame.image.load(resource_path("assets/menu32.png"))
 
         self.button_width = 70
         self.button_height = 40

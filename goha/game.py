@@ -5,6 +5,7 @@ from .gamesimple import Gamesimple
 from .opponent import Opponent
 from .settings import Settings
 from .constants import BLACK, WHITE
+from .utils import resource_path
 
 class Game:
     def __init__(self, win, opponent_difficulty=0, player_color=0, handicap=0, time=0, board_size=0):
@@ -50,15 +51,15 @@ class Game:
             if self.board.calc_square(row, col) in self.board.legal_moves:
                 self.board.place(row, col, self.turn)
                 self.last_move = self.board.calc_square(row, col)
-                pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/stoneplaced.wav'))
+                pygame.mixer.Channel(1).play(pygame.mixer.Sound(resource_path('soundeffects/stoneplaced.wav')))
                 return True
             else:
                 print('place is illegal')
-                pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/incorrectmove.wav'))
+                pygame.mixer.Channel(1).play(pygame.mixer.Sound(resource_path('soundeffects/incorrectmove.wav')))
                 return False
         else:
             print('place is occupied')
-            pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/incorrectmove.wav'))
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound(resource_path('soundeffects/incorrectmove.wav')))
             return False
     
     def process_move(self):
@@ -95,9 +96,9 @@ class Game:
         self.score[BLACK] += len(self.board.territory[BLACK])
         self.score[WHITE] += len(self.board.territory[WHITE])
         if self.score[self.player_color] < self.score[3-self.player_color] and self.opponent_difficulty != 4:
-            pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamelost.wav'))
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound(resource_path('soundeffects/gamelost.wav')))
         else:
-            pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamewon.wav'))
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound(resource_path('soundeffects/gamewon.wav')))
         self.info_text[0] = self.language['Game ends.']
         self.info_text[1] = str(self.score[BLACK]) + ' - ' + str(self.score[WHITE])
 
@@ -107,9 +108,9 @@ class Game:
         self.player_clock.pause()
         self.oponent_clock.pause()
         if self.player_clock.miliseconds == 0 and self.opponent_difficulty != 4:
-            pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamelost.wav'))
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound(resource_path('soundeffects/gamelost.wav')))
         else:
-            pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamewon.wav'))
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound(resource_path('soundeffects/gamewon.wav')))
         if self.player_clock.miliseconds == 0:
             if self.player_color == BLACK:
                 self.info_text[0] = self.language['Game ends. White won.']
@@ -130,7 +131,7 @@ class Game:
         self.board.territory_drawn = True
         self.player_clock.pause()
         self.oponent_clock.pause()
-        pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/gamelost.wav'))
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound(resource_path('soundeffects/gamelost.wav')))
         self.info_text[0] = self.language['Game ends.']
         self.info_text[1] = self.language['Player resigned.']
 

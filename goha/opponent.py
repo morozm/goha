@@ -1,6 +1,7 @@
 import random
 import pygame
 from .constants import EMPTY, WIN
+from .utils import resource_path
 
 class Opponent:
     def __init__(self, difficulty):
@@ -12,7 +13,7 @@ class Opponent:
 
     def make_move(self, color, board, square):
         board.place2(square, color)
-        pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/stoneplaced.wav'))
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound(resource_path('soundeffects/stoneplaced.wav')))
 
     def gen_random_move(self, color, board):
         if len(board.legal_moves) != 0: # just in case but should never happen

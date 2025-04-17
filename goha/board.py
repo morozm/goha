@@ -2,6 +2,7 @@ import pygame, random
 from .constants import OFFBOARD, MARKER, EMPTY, LIBERTY, BOARDS, STONECOLORS, BLACKCOLOR, BROWNCOLOR, WIDTH, HEIGHT, BLACK, WHITE
 from .piecetodraw import PieceToDraw
 from .settings import Settings
+from .utils import resource_path
 BOARD_MENU_SPACE = 50
 BOARD_EDGE_SPACE = 20
 
@@ -19,7 +20,7 @@ class Board:
         self.board_size = board_size
         self.territory_drawn = False
         self.settings = Settings()
-        self.texture = pygame.image.load("goha/textures/texture2.jpg")
+        self.texture = pygame.image.load(resource_path("textures/texture2.jpg"))
         self.load_settings()
         self._init()
 
@@ -265,7 +266,7 @@ class Board:
                 if len(self.liberties) == 0:
                     self.clear_block()
                     captured += len(self.block)
-                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('goha/soundeffects/stonescaptured.wav'))
+                    pygame.mixer.Channel(1).play(pygame.mixer.Sound(resource_path('soundeffects/stonescaptured.wav')))
                 self.restore_board()
         return captured
 

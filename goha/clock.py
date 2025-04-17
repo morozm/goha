@@ -1,5 +1,6 @@
 import pygame
 from .constants import FPS
+from .utils import resource_path
 
 class Clock:
     def __init__(self, time):
@@ -7,7 +8,7 @@ class Clock:
         self._init()
 
     def _init(self):
-        self.time_font = pygame.font.Font("goha/assets/Shojumaru-Regular.ttf", 25)
+        self.time_font = pygame.font.Font(resource_path("assets/Shojumaru-Regular.ttf"), 25)
         self.paused = True
         self.new_miliseconds = [0, 0]
 

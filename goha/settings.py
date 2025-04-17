@@ -1,24 +1,34 @@
 import json
 import os
+import shutil
 from .constants import THEMES, LANGUAGES, THEMES_LIST, LANGUAGES_LIST
+from .utils import resource_path
 
 class Settings:
     def __init__(self):
-        self.file_path = "settings.json"
+        self.filename = "settings.json"
+        self.user_dir = os.path.join(os.getenv("APPDATA") or os.path.expanduser("~"), "Goha")
+        os.makedirs(self.user_dir, exist_ok=True)
+
+        self.file_path = os.path.join(self.user_dir, self.filename)
+
         self.initialize_settings()
         self.load_settings()
 
     def load_settings(self):
-        if os.path.exists(self.file_path):
+        try:
             with open(self.file_path, "r") as file:
                 data = json.load(file)
                 self.username = data.get("username", "")
-                self.selected_theme = data.get("theme", "")
-                self.theme = THEMES[self.selected_theme]
-                self.selected_language = data.get("language", "")
-                self.language = LANGUAGES[self.selected_language]
-                self.stone_centering = data.get("stone_centering", "")
-                self.volume = data.get("volume", "")
+                self.selected_theme = data.get("theme", THEMES_LIST[0])
+                self.theme = THEMES.get(self.selected_theme, THEMES[THEMES_LIST[0]])
+                self.selected_language = data.get("language", LANGUAGES_LIST[0])
+                self.language = LANGUAGES.get(self.selected_language, LANGUAGES[LANGUAGES_LIST[0]])
+                self.stone_centering = data.get("stone_centering", True)
+                self.volume = data.get("volume", 50)
+        except Exception as e:
+            print(f"Błąd ładowania ustawień: {e}")
+            self.initialize_settings()
 
     def save_settings(self, username, selected_theme, selected_language, stone_centering, volume):
         data = {
@@ -28,17 +38,15 @@ class Settings:
             "stone_centering": stone_centering,
             "volume": volume
         }
-        with open(self.file_path, "w") as file:
-            json.dump(data, file, indent=4)
+        try:
+            with open(self.file_path, "w") as file:
+                json.dump(data, file, indent=4)
+        except Exception as e:
+            print(f"Błąd zapisu ustawień: {e}")
 
     def initialize_settings(self):
         if not os.path.exists(self.file_path):
-            initial_username = "User"
-            initial_theme = THEMES_LIST[0]
-            initial_language = LANGUAGES_LIST[0]
-            initial_stone_centering = True
-            initial_volume = 50
-            self.save_settings(initial_username, initial_theme, initial_language, initial_stone_centering, initial_volume)
+            self.save_settings("User", THEMES_LIST[0], LANGUAGES_LIST[0], True, 50)
 
     def get_username(self):
         return self.username
